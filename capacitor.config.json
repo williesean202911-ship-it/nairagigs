@@ -1,0 +1,9 @@
+{
+  "appId": "com.signaldesk.app",
+  "appName": "Signal Desk",
+  "webDir": "www",
+  "backgroundColor": "#0F1822",
+  "plugins": {
+    "CapacitorHttp": { "enabled": true }
+  }
+}

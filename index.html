@@ -1,400 +1,517 @@
-int main(int argc, char *argv[])
-{
-	<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NairaGigs - Find Local Talents</title>
-    <script src="https://js.paystack.co/v1/inline.js"></script>
-    <style>
-        :root {
-            --bg-color: #ffffff;
-            --text-color: #1a1a1a;
-            --primary: #0066cc;
-            --success: #25D366;
-            --share-color: #00a2ff;
-            --card-bg: #f4f4f4;
-            --border: #dddddd;
-            --comment-bg: #e9e9e9;
-            --premium-glow: #ffcc00;
-        }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #121212;
-                --text-color: #ffffff;
-                --primary: #3399ff;
-                --success: #2e7d32;
-                --share-color: #33b5e5;
-                --card-bg: #1e1e1e;
-                --border: #333333;
-                --comment-bg: #2a2a2a;
-            }
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-        }
-        .form-container {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            max-width: 500px;
-            margin: 20px auto;
-            border: 1px solid var(--border);
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .form-group input, .form-group input[type="file"], .form-group select {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-        }
-        .btn-whatsapp {
-            background-color: var(--success);
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-            box-sizing: border-box;
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .card {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-        }
-        .card.featured {
-            border: 2px solid var(--premium-glow);
-            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.2);
-        }
-        .badge-premium {
-            background-color: var(--premium-glow);
-            color: #1a1a1a;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 4px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-        .gig-image {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-        .action-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 12px;
-            padding-top: 8px;
-            border-top: 1px solid var(--border);
-        }
-        .react-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .btn-share {
-            background-color: var(--share-color);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .comments-section {
-            margin-top: 15px;
-            border-top: 1px dashed var(--border);
-            padding-top: 10px;
-        }
-        .comments-list {
-            max-height: 100px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-        }
-        .comment-item {
-            background-color: var(--comment-bg);
-            padding: 8px;
-            border-radius: 6px;
-            margin-bottom: 5px;
-            font-size: 13px;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0F1822">
+<title>Signal Desk</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+
+<style>
+:root{--bg:#0F1822;--panel:#16222F;--panel2:#1B2A3A;--line:#26384B;--text:#E8EEF4;--muted:#9FB0C2;--blue:#5BA4FF;--orange:#FF9A52;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+#app{max-width:720px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.mono{font-family:ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace}
+.muted{color:var(--muted)}.small{font-size:12px}.err{color:var(--orange)}
+.spacer{flex:1}
+.bar{display:flex;align-items:center;gap:8px;padding:8px 0 12px}
+.bar h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em}
+.icon{min-height:44px;min-width:44px;padding:0 10px;border-radius:8px;color:var(--muted)}
+.sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;margin-bottom:12px}
+.chip{padding:2px 10px;border:1px solid var(--line);border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tabs{display:flex;align-items:center;gap:6px;margin-bottom:14px}
+.tab{min-height:44px;min-width:52px;padding:0 14px;border-radius:8px;border:1px solid var(--line);font-weight:600}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#0F1822}
+.run{min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--blue);color:var(--blue);font-weight:600}
+.run:disabled{opacity:.5}
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:64px;padding:10px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;text-align:left}
+button.row:active{background:var(--panel2)}
+.right{display:flex;align-items:center;gap:12px}
+.pill{display:inline-block;min-width:48px;padding:4px 10px;border:1px solid;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.06em;text-align:center}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card p{margin:8px 0 0}
+.between{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.big{font-size:26px}.huge{font-size:28px;font-weight:500}
+.label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.head2{font-size:18px;font-weight:700;margin-bottom:6px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:8px}
+.legend i{display:inline-block;width:14px;height:2px;margin-right:6px;vertical-align:middle}
+#chart{width:100%;height:280px;display:block}
+.ind{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.meter{position:relative;height:4px;border-radius:2px;background:var(--line);margin:6px 5px 2px}
+.meter .tick{position:absolute;left:50%;top:-3px;width:1px;height:10px;background:#5C7189}
+.meter .dot{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%}
+.prow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.prow .right{flex-direction:column;align-items:flex-end;gap:0}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px}
+.size{margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--bg);display:flex;flex-direction:column;gap:2px}
+.foot{font-size:12px;color:var(--muted);margin:12px 0 0}
+.form{display:flex;flex-direction:column;gap:6px}
+.form label{font-size:12px;color:var(--muted);margin-top:8px}
+.form input{width:100%;min-height:44px;padding:0 12px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:15px ui-monospace,Menlo,Consolas,monospace}
+.primary{min-height:48px;margin-top:16px;border-radius:8px;background:var(--blue);color:#0F1822;font-weight:600}
+.ghost{min-height:48px;border-radius:8px;border:1px solid var(--line);font-weight:600}
+@media (prefers-reduced-motion:no-preference){button{transition:background .15s}}
+</style>
 </head>
 <body>
+<div id="app"></div>
+<script>
+/* Signal Desk analysis engine. Pure functions, no DOM. */
+(function (root) {
+  var PAIRS = [
+    { sym: 'EUR/USD', pip: 0.0001, pv: 10,   dec: 5, base: 1.0840, vol: 0.0006, seed: 11 },
+    { sym: 'GBP/USD', pip: 0.0001, pv: 10,   dec: 5, base: 1.2610, vol: 0.0008, seed: 23 },
+    { sym: 'USD/JPY', pip: 0.01,   pv: 6.5,  dec: 3, base: 154.20, vol: 0.09,   seed: 37 },
+    { sym: 'AUD/USD', pip: 0.0001, pv: 10,   dec: 5, base: 0.6520, vol: 0.0005, seed: 41 },
+    { sym: 'USD/CAD', pip: 0.0001, pv: 7.15, dec: 5, base: 1.3980, vol: 0.0006, seed: 53 },
+    { sym: 'GBP/JPY', pip: 0.01,   pv: 6.5,  dec: 3, base: 194.30, vol: 0.12,   seed: 67 }
+  ];
 
-    <header>
-        <h2>🇳🇬 NairaGigs</h2>
-        <button class="btn" style="width: auto;" id="refresh-btn" onclick="loadGigs()">Refresh Feed</button>
-    </header>
+  function rng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
 
-    <div class="form-container">
-        <h3>Post a New Gig / Job</h3>
-        <div class="form-group">
-            <label>Gig Title</label>
-            <input type="text" id="title" placeholder="e.g., Creative Logo Design">
-        </div>
-        <div class="form-group">
-            <label>Your Name</label>
-            <input type="text" id="author" placeholder="e.g., Tunde Dev">
-        </div>
-        <div class="form-group">
-            <label>Your Email Address</label>
-            <input type="email" id="email" placeholder="name@example.com">
-        </div>
-        <div class="form-group">
-            <label>WhatsApp Number (e.g., 2348012345678)</label>
-            <input type="text" id="phone" placeholder="Include country code, no spaces">
-        </div>
-        <div class="form-group">
-            <label>Price / Budget</label>
-            <input type="text" id="price" placeholder="e.g., ₦20,000">
-        </div>
-        <div class="form-group">
-            <label>Upload Job Photo / Sample</label>
-            <input type="file" id="job-photo" accept="image/*">
-        </div>
-        <div class="form-group">
-            <label>Tier Type</label>
-            <select id="tier-type">
-                <option value="free">Standard Post (Free)</option>
-                <option value="featured">🌟 Premium Featured Post (₦1,000)</option>
-            </select>
-        </div>
-        <button class="btn" onclick="submitGig()">Publish Gig Live</button>
-    </div>
+  /* Sample candles for demo mode, used when no API key is set. */
+  function demoCandles(p, tf, runs) {
+    var mult = { '1h': 1, '4h': 1.9, '1day': 3.6 }[tf] || 1;
+    var idx = { '1h': 1, '4h': 2, '1day': 3 }[tf] || 1;
+    var r = rng(p.seed * 977 + idx * 131 + runs * 7919);
+    var out = [], c = p.base, drift = r() - 0.5;
+    for (var i = 0; i < 120; i++) {
+      if (i % 30 === 0) drift = r() - 0.5;
+      var o = c;
+      c = o + ((r() - 0.5) * 2 + drift) * p.vol * mult;
+      var w = r() * p.vol * mult * 0.8;
+      out.push({ t: i, o: o, c: c, h: Math.max(o, c) + w * r(), l: Math.min(o, c) - w * r() });
+    }
+    return out;
+  }
 
-    <div class="grid" id="gigs-container"></div>
+  function ema(a, n) {
+    var k = 2 / (n + 1), o = [a[0]];
+    for (var i = 1; i < a.length; i++) o.push(a[i] * k + o[i - 1] * (1 - k));
+    return o;
+  }
 
-    <script>
-        // CONFIGURATION: INSERT YOUR PAYSTACK PUBLIC KEY VALUE HERE
-        const PAYSTACK_PUBLIC_KEY = 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; 
+  function rsi(cl, n) {
+    var g = 0, l = 0, i, d;
+    for (i = 1; i <= n; i++) { d = cl[i] - cl[i - 1]; if (d >= 0) g += d; else l -= d; }
+    g /= n; l /= n;
+    for (i = n + 1; i < cl.length; i++) {
+      d = cl[i] - cl[i - 1];
+      g = (g * (n - 1) + Math.max(d, 0)) / n;
+      l = (l * (n - 1) + Math.max(-d, 0)) / n;
+    }
+    return l === 0 ? 100 : 100 - 100 / (1 + g / l);
+  }
 
-        if (!localStorage.getItem('local_gigs')) {
-            const seedData = [
-                { id: 1, title: "Logo Design & Branding", author: "Tunde graphics", phone: "2348000000000", price: "₦15,000", image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400", isPremium: true, likes: 45, loves: 12, fires: 24, comments: [] },
-                { id: 2, title: "Website SEO Optimization", author: "Amaka Code", phone: "2348000000000", price: "₦45,000", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400", isPremium: false, likes: 5, loves: 2, fires: 3, comments: [] }
-            ];
-            localStorage.setItem('local_gigs', JSON.stringify(seedData));
-        }
+  function atr(cs, n) {
+    var tr = [], i;
+    for (i = 1; i < cs.length; i++) {
+      tr.push(Math.max(cs[i].h - cs[i].l, Math.abs(cs[i].h - cs[i - 1].c), Math.abs(cs[i].l - cs[i - 1].c)));
+    }
+    var a = tr.slice(0, n).reduce(function (x, y) { return x + y; }, 0) / n;
+    for (i = n; i < tr.length; i++) a = (a * (n - 1) + tr[i]) / n;
+    return a;
+  }
 
-        function loadGigs() {
-            const refreshBtn = document.getElementById('refresh-btn');
-            refreshBtn.innerText = "Refreshing...";
-            
-            let gigs = JSON.parse(localStorage.getItem('local_gigs')) || [];
-            gigs.sort((a, b) => (b.isPremium ? 1 : 0) - (a.isPremium ? 1 : 0));
-            
-            let container = document.getElementById('gigs-container');
-            container.innerHTML = '';
-            
-            gigs.forEach((gig, index) => {
-                let phoneNum = gig.phone || "2348000000000";
-                let waMsg = encodeURIComponent(`Hello ${gig.author}! I saw your gig "${gig.title}" on NairaGigs and I want to hire you.`);
-                let waUrl = `https://wa.me/${phoneNum}?text=${waMsg}`;
+  function bands(cl) {
+    var up = [], lo = [];
+    for (var i = 0; i < cl.length; i++) {
+      var w = cl.slice(Math.max(0, i - 19), i + 1);
+      var mean = w.reduce(function (x, y) { return x + y; }, 0) / w.length;
+      var sd = Math.sqrt(w.reduce(function (x, y) { return x + (y - mean) * (y - mean); }, 0) / w.length);
+      up.push(mean + 2 * sd); lo.push(mean - 2 * sd);
+    }
+    return { up: up, lo: lo };
+  }
 
-                let likes = gig.likes || 0;
-                let loves = gig.loves || 0;
-                let fires = gig.fires || 0;
+  function analyse(cs) {
+    var cl = cs.map(function (c) { return c.c; });
+    var e20 = ema(cl, 20), e50 = ema(cl, 50), m12 = ema(cl, 12), m26 = ema(cl, 26);
+    var macd = m12.map(function (v, i) { return v - m26[i]; });
+    var sig = ema(macd, 9);
+    var hist = macd[macd.length - 1] - sig[sig.length - 1];
+    var r = rsi(cl, 14), a = atr(cs, 14), bb = bands(cl);
+    var last = cl[cl.length - 1];
+    var u = bb.up[bb.up.length - 1], l = bb.lo[bb.lo.length - 1];
+    var pb = (last - l) / ((u - l) || 1e-9);
+    var trend = e20[e20.length - 1] > e50[e50.length - 1] ? 1 : -1;
+    var mom = hist > 0 ? 1 : -1;
+    var rs = r < 30 ? 1 : r > 70 ? -1 : Math.max(-0.8, Math.min(0.8, (r - 50) / 25));
+    var bs = pb < 0.1 ? 0.5 : pb > 0.9 ? -0.5 : 0;
+    var score = (trend + mom + rs + bs) / 3.5;
+    return {
+      signal: score >= 0.4 ? 'BUY' : score <= -0.4 ? 'SELL' : 'WAIT',
+      conf: Math.round(Math.abs(score) * 100),
+      score: score, last: last, atr: a, rsi: r, hist: hist, pb: pb,
+      trend: trend, mom: mom, rs: rs, bs: bs,
+      e20: e20, e50: e50, bbUp: bb.up, bbLo: bb.lo
+    };
+  }
 
-                let shareText = encodeURIComponent(`🔥 Check out this talent on NairaGigs!\n📌 Title: ${gig.title}\n💰 Budget: ${gig.price}\nContact: https://wa.me/${phoneNum}`);
-                let whatsappShareUrl = `https://api.whatsapp.com/send?text=${shareText}`;
+  function plan(res, pair, balance, riskPct) {
+    if (res.signal === 'WAIT') return null;
+    var d = res.signal === 'BUY' ? 1 : -1, e = res.last;
+    var sl = e - d * 1.5 * res.atr, tp1 = e + d * 2 * res.atr, tp2 = e + d * 3.5 * res.atr;
+    var slPips = Math.abs(e - sl) / pair.pip;
+    var ok = balance > 0 && riskPct > 0;
+    var riskUsd = ok ? balance * riskPct / 100 : 0;
+    var lots = ok ? Math.max(0.01, Math.floor(riskUsd / (slPips * pair.pv) * 100) / 100) : 0;
+    return {
+      dir: d, entry: e, sl: sl, tp1: tp1, tp2: tp2,
+      slPips: slPips, tp1Pips: Math.abs(tp1 - e) / pair.pip, tp2Pips: Math.abs(tp2 - e) / pair.pip,
+      rr: Math.abs(tp1 - e) / Math.abs(e - sl), riskUsd: riskUsd, lots: lots, ok: ok
+    };
+  }
 
-                let imageTag = gig.image ? `<img src="${gig.image}" class="gig-image">` : `<div class="gig-image" style="display:flex; align-items:center; justify-content:center; border:1px solid var(--border); color:gray;">No sample image</div>`;
+  var api = { PAIRS: PAIRS, demoCandles: demoCandles, analyse: analyse, plan: plan };
+  root.Analysis = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
 
-                let commentsHtml = '';
-                let commentsList = gig.comments || [];
-                commentsList.forEach(c => {
-                    commentsHtml += `<div class="comment-item"><strong>${c.name}:</strong> ${c.text}</div>`;
-                });
+</script>
+<script>
+/* Signal Desk UI. Talks to Twelve Data, runs Analysis, raises notifications. */
+(function () {
+  var A = window.Analysis;
+  var BLUE = '#5BA4FF', ORANGE = '#FF9A52', MUTED = '#9FB0C2';
+  var TFS = [['1h', 'H1'], ['4h', 'H4'], ['1day', 'D1']];
 
-                let premiumClass = gig.isPremium ? 'featured' : '';
-                let premiumBadge = gig.isPremium ? '<span class="badge-premium">🌟 FEATURED</span>' : '';
+  function load(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 
-                container.innerHTML += `
-                    <div class="card ${premiumClass}">
-                        ${premiumBadge}
-                        <div>
-                            ${imageTag}
-                            <h3>${gig.title}</h3>
-                            <p>By: ${gig.author}</p>
-                            <p><strong>Budget: ${gig.price}</strong></p>
-                            <a href="${waUrl}" target="_blank" class="btn btn-whatsapp">Contact on WhatsApp</a>
-                        </div>
-                        
-                        <div class="action-bar">
-                            <button class="react-btn" onclick="handleReaction(${index}, 'likes')">👍 <span>${likes}</span></button>
-                            <button class="react-btn" onclick="handleReaction(${index}, 'loves')">❤️ <span>${loves}</span></button>
-                            <button class="react-btn" onclick="handleReaction(${index}, 'fires')">🔥 <span>${fires}</span></button>
-                            <a href="${whatsappShareUrl}" target="_blank" class="btn-share">📢 Share</a>
-                        </div>
-                        
-                        <div class="comments-section">
-                            <h4>Comments (${commentsList.length})</h4>
-                            <div class="comments-list">${commentsHtml || '<p style="color:gray; font-size:12px;">No comments yet.</p>'}</div>
-                            <div class="comment-input-group" style="display:flex; gap:5px;">
-                                <input type="text" id="c-name-${index}" placeholder="Name" style="width:30%; padding:6px; border-radius:6px; border:1px solid var(--border); background-color:var(--bg-color); color:var(--text-color);">
-                                <input type="text" id="c-text-${index}" placeholder="Add comment..." style="flex:1; padding:6px; border-radius:6px; border:1px solid var(--border); background-color:var(--bg-color); color:var(--text-color);">
-                                <button class="btn" style="width:auto; padding:6px 12px; font-size:13px;" onclick="addComment(${index})">Post</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
+  var cfg = Object.assign({ key: '', balance: 5000, risk: 1, tf: '1h', every: 15 }, load('cfg', {}));
+  var notified = load('notified', {});
+  var rows = {};           // symbol -> { cs, res, error }
+  var runs = 0;
+  var selected = 0;
+  var screen = 'list';     // list | detail | settings
+  var busy = false;
+  var statusText = '';
+  var timer = null;
 
-            setTimeout(() => { refreshBtn.innerText = "Refresh Feed"; }, 400);
-        }
+  var $app = document.getElementById('app');
 
-        function handleReaction(index, type) {
-            let gigs = JSON.parse(localStorage.getItem('local_gigs')) || [];
-            gigs.sort((a, b) => (b.isPremium ? 1 : 0) - (a.isPremium ? 1 : 0));
-            if (!gigs[index][type]) gigs[index][type] = 0;
-            gigs[index][type] += 1;
-            localStorage.setItem('local_gigs', JSON.stringify(gigs));
-            loadGigs();
-        }
+  function fmt(v, d) { return Number(v).toFixed(d); }
+  function money(v) { return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function pill(sig) {
+    var c = sig === 'BUY' ? BLUE : sig === 'SELL' ? ORANGE : MUTED;
+    return '<span class="pill" style="color:' + c + ';border-color:' + c + '">' + sig + '</span>';
+  }
+  function demoMode() { return !cfg.key; }
 
-        function submitGig() {
-            const title = document.getElementById('title').value;
-            const author = document.getElementById('author').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const price = document.getElementById('price').value;
-            const tierType = document.getElementById('tier-type').value;
-            const photoFile = document.getElementById('job-photo').files[0];
+  /* ---------- notifications ---------- */
+  function LN() { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications; }
 
-            if(!title || !author || !email || !phone || !price) {
-                alert("Please fill out all fields, including your email address!");
-                return;
-            }
+  function askPermission() {
+    var ln = LN();
+    if (ln) return ln.requestPermissions().then(function (r) { return r.display === 'granted'; });
+    if ('Notification' in window) return Notification.requestPermission().then(function (p) { return p === 'granted'; });
+    return Promise.resolve(false);
+  }
 
-            const isPremium = (tierType === 'featured');
+  function notify(title, body) {
+    var ln = LN();
+    if (ln) {
+      return ln.schedule({ notifications: [{ id: Math.floor(Date.now() % 2147483000), title: title, body: body }] });
+    }
+    if ('serviceWorker' in navigator && 'Notification' in window && Notification.permission === 'granted') {
+      return navigator.serviceWorker.ready.then(function (reg) {
+        return reg.showNotification(title, { body: body, icon: 'icon-192.png', badge: 'icon-192.png', vibrate: [200, 100, 200] });
+      }).catch(function () { try { new Notification(title, { body: body }); } catch (e) {} });
+    }
+    return Promise.resolve();
+  }
 
-            const saveGigRecord = (imageDataUrl) => {
-                if (isPremium) {
-                    // INITIALIZE PAYSTACK AUTOMATED CHECKOUT WINDOW
-                    let handler = PaystackPop.setup({
-                        key: PAYSTACK_PUBLIC_KEY,
-                        email: email,
-                        amount: 1000 * 100, // Paystack counts in Kobo (1000 Naira = 100000 Kobo)
-                        currency: "NGN",
-                        callback: function(response) {
-                            // Executed dynamically ONLY when the credit card charge clears successfully!
-                            alert('Payment successful! Reference: ' + response.reference);
-                            executeInsert(title, author, phone, price, imageDataUrl, true);
-                        },
-                        onClose: function() {
-                            alert('Transaction cancelled. Your gig was not published.');
-                        }
-                    });
-                    handler.openIframe();
-                } else {
-                    // Standard routing path for free listings
-                    executeInsert(title, author, phone, price, imageDataUrl, false);
-                }
-            };
+  /* ---------- data ---------- */
+  function fetchCandles(pair) {
+    var url = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(pair.sym) +
+      '&interval=' + cfg.tf + '&outputsize=150&apikey=' + encodeURIComponent(cfg.key);
+    return fetch(url).then(function (r) { return r.json(); }).then(function (j) {
+      if (j.status !== 'ok' || !j.values) throw new Error(j.message || 'No data');
+      var cs = j.values.slice().reverse().map(function (v) {
+        return { t: v.datetime, o: +v.open, h: +v.high, l: +v.low, c: +v.close };
+      });
+      return cs.slice(0, -1); // drop the candle that is still forming
+    });
+  }
 
-            if (photoFile) {
-                const reader = new FileReader();
-                reader.onloadend = () => saveGigRecord(reader.result);
-                reader.readAsDataURL(photoFile);
-            } else {
-                saveGigRecord(null);
-            }
-        }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
-        function executeInsert(title, author, phone, price, imageDataUrl, premiumStatus) {
-            let gigs = JSON.parse(localStorage.getItem('local_gigs')) || [];
-            gigs.push({ id: Date.now(), title, author, phone, price, image: imageDataUrl, isPremium: premiumStatus, likes: 0, loves: 0, fires: 0, comments: [] });
-            localStorage.setItem('local_gigs', JSON.stringify(gigs));
-            
-            document.getElementById('title').value = '';
-            document.getElementById('author').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('job-photo').value = '';
-            document.getElementById('tier-type').value = 'free';
-            loadGigs();
-        }
+  function maybeAlert(pair, cs, res) {
+    if (res.signal === 'WAIT' || cs.length < 60) return;
+    var prev = A.analyse(cs.slice(0, -1));
+    if (prev.signal === res.signal) return;
+    var stamp = String(cs[cs.length - 1].t);
+    var key = pair.sym + '|' + cfg.tf;
+    if (notified[key] === stamp + res.signal) return;
+    notified[key] = stamp + res.signal;
+    save('notified', notified);
+    var p = A.plan(res, pair, +cfg.balance, +cfg.risk);
+    notify(res.signal + ' ' + pair.sym + ' (' + cfg.tf + ')',
+      'Entry ' + fmt(p.entry, pair.dec) + '  SL ' + fmt(p.sl, pair.dec) + '  TP ' + fmt(p.tp1, pair.dec) +
+      '  Size ' + p.lots.toFixed(2) + ' lots');
+  }
 
-        function addComment(gigIndex) {
-            const nameInput = document.getElementById(`c-name-${gigIndex}`);
-            const textInput = document.getElementById(`c-text-${gigIndex}`);
-            const name = nameInput.value.trim();
-            const text = textInput.value.trim();
+  function refresh() {
+    if (busy) return Promise.resolve();
+    busy = true; statusText = 'Analysing...'; render();
+    var chain = Promise.resolve();
+    if (demoMode()) runs += 1;
+    A.PAIRS.forEach(function (pair, i) {
+      chain = chain.then(function () {
+        var get = demoMode() ? Promise.resolve(A.demoCandles(pair, cfg.tf, runs)) : fetchCandles(pair);
+        return get.then(function (cs) {
+          var res = A.analyse(cs);
+          rows[pair.sym] = { cs: cs, res: res };
+          if (!demoMode()) maybeAlert(pair, cs, res);
+        }).catch(function (e) {
+          rows[pair.sym] = { error: e.message || 'Failed' };
+        }).then(function () { return demoMode() ? null : sleep(800); });
+      });
+    });
+    return chain.then(function () {
+      busy = false;
+      var d = new Date();
+      statusText = 'Updated ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      render();
+    });
+  }
 
-            if (!name || !text) return;
+  function schedule() {
+    if (timer) clearInterval(timer);
+    var mins = Math.max(1, +cfg.every || 15);
+    timer = setInterval(function () { if (!demoMode()) refresh(); }, mins * 60000);
+  }
 
-            let gigs = JSON.parse(localStorage.getItem('local_gigs')) || [];
-            gigs.sort((a, b) => (b.isPremium ? 1 : 0) - (a.isPremium ? 1 : 0));
-            if (!gigs[gigIndex].comments) gigs[gigIndex].comments = [];
-            gigs[gigIndex].comments.push({ name, text });
-            
-            localStorage.setItem('local_gigs', JSON.stringify(gigs));
-            loadGigs();
-        }
+  /* ---------- chart ---------- */
+  function drawChart(canvas, pair, row) {
+    var cs = row.cs.slice(-60), res = row.res;
+    var n = cs.length, off = row.cs.length - n;
+    var plan = A.plan(res, pair, +cfg.balance, +cfg.risk);
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    var g = canvas.getContext('2d');
+    g.scale(dpr, dpr);
+    var hi = Math.max.apply(null, cs.map(function (c) { return c.h; }));
+    var lo = Math.min.apply(null, cs.map(function (c) { return c.l; }));
+    if (plan) [plan.sl, plan.tp1, plan.tp2].forEach(function (v) { hi = Math.max(hi, v); lo = Math.min(lo, v); });
+    var pad = (hi - lo) * 0.06; hi += pad; lo -= pad;
+    var axisW = 64, pw = w - axisW;
+    function Y(v) { return (hi - v) / (hi - lo) * h; }
+    function X(i) { return (i + 0.5) / n * pw; }
+    g.lineWidth = 1; g.strokeStyle = '#1F3042'; g.fillStyle = MUTED; g.font = '10px monospace';
+    [0.2, 0.4, 0.6, 0.8].forEach(function (f) {
+      var y = f * h; g.beginPath(); g.moveTo(0, y); g.lineTo(pw, y); g.stroke();
+      g.fillText(fmt(hi - f * (hi - lo), pair.dec), pw + 6, y + 3);
+    });
+    var bw = Math.max(2, pw / n * 0.6);
+    cs.forEach(function (c, i) {
+      var col = c.c >= c.o ? BLUE : ORANGE;
+      g.strokeStyle = col; g.fillStyle = col;
+      g.beginPath(); g.moveTo(X(i), Y(c.h)); g.lineTo(X(i), Y(c.l)); g.stroke();
+      var top = Y(Math.max(c.o, c.c)), bh = Math.max(1.5, Math.abs(Y(c.o) - Y(c.c)));
+      g.fillRect(X(i) - bw / 2, top, bw, bh);
+    });
+    function line(arr, color, dash) {
+      g.strokeStyle = color; g.lineWidth = 1.5; g.setLineDash(dash || []);
+      g.beginPath();
+      for (var i = 0; i < n; i++) { var x = X(i), y = Y(arr[off + i]); if (i) g.lineTo(x, y); else g.moveTo(x, y); }
+      g.stroke(); g.setLineDash([]);
+    }
+    line(res.bbUp, '#6F8399', [4, 4]); line(res.bbLo, '#6F8399', [4, 4]);
+    line(res.e50, '#C58BFF'); line(res.e20, '#E8EEF4');
+    if (plan) {
+      [['TP2', plan.tp2, BLUE, [6, 4]], ['TP1', plan.tp1, BLUE, [6, 4]], ['Entry', plan.entry, '#E8EEF4', []], ['SL', plan.sl, ORANGE, [6, 4]]]
+        .forEach(function (L) {
+          var y = Y(L[1]);
+          g.strokeStyle = L[2]; g.lineWidth = 1.5; g.setLineDash(L[3]);
+          g.beginPath(); g.moveTo(0, y); g.lineTo(pw, y); g.stroke(); g.setLineDash([]);
+          g.fillStyle = L[2]; g.fillRect(pw + 2, y - 8, axisW - 2, 16);
+          g.fillStyle = '#0F1822'; g.font = '10px monospace';
+          g.fillText(L[0], pw + 6, y + 3);
+        });
+    }
+  }
 
-        window.onload = loadGigs;
-    </script>
+  /* ---------- views ---------- */
+  function header(title, back) {
+    return '<header class="bar">' +
+      (back ? '<button class="icon" data-act="back" aria-label="Back">&larr;</button>' : '') +
+      '<h1>' + title + '</h1>' +
+      '<span class="spacer"></span>' +
+      '<button class="icon" data-act="settings" aria-label="Settings">Settings</button></header>';
+  }
+
+  function viewList() {
+    var buy = 0, sell = 0, wait = 0;
+    A.PAIRS.forEach(function (p) {
+      var r = rows[p.sym];
+      if (r && r.res) { if (r.res.signal === 'BUY') buy++; else if (r.res.signal === 'SELL') sell++; else wait++; }
+    });
+    var h = header('Signal Desk', false);
+    h += '<div class="sub">' + (demoMode() ? '<span class="chip">Demo data</span> ' : '') +
+      '<span class="muted">' + buy + ' buy &middot; ' + sell + ' sell &middot; ' + wait + ' wait</span>' +
+      '<span class="spacer"></span><span class="muted">' + statusText + '</span></div>';
+    h += '<div class="tabs">';
+    TFS.forEach(function (t) {
+      h += '<button class="tab' + (cfg.tf === t[0] ? ' on' : '') + '" data-tf="' + t[0] + '">' + t[1] + '</button>';
+    });
+    h += '<span class="spacer"></span><button class="run" data-act="run"' + (busy ? ' disabled' : '') + '>' +
+      (busy ? 'Running' : 'Run analysis') + '</button></div>';
+    h += '<div class="list">';
+    A.PAIRS.forEach(function (p, i) {
+      var r = rows[p.sym];
+      if (!r) { h += '<div class="row"><b>' + p.sym + '</b><span class="muted">Waiting...</span></div>'; return; }
+      if (r.error) { h += '<div class="row"><b>' + p.sym + '</b><span class="muted err">' + r.error + '</span></div>'; return; }
+      h += '<button class="row" data-pair="' + i + '"><span><b>' + p.sym + '</b><br><span class="mono muted">' +
+        fmt(r.res.last, p.dec) + '</span></span><span class="right"><span class="mono muted">' + r.res.conf + '%</span>' +
+        pill(r.res.signal) + '</span></button>';
+    });
+    h += '</div><p class="foot">Confidence shows how strongly the four indicators agree. ' +
+      (demoMode() ? 'Add a Twelve Data key in Settings for live prices. ' : '') +
+      'Not financial advice.</p>';
+    return h;
+  }
+
+  function reading(m) {
+    var c = m > 0.15 ? BLUE : m < -0.15 ? ORANGE : MUTED;
+    return c;
+  }
+  function indRow(name, value, text, m, mark) {
+    var c = reading(m);
+    var meter = mark ? '<div class="meter"><i class="tick"></i><i class="dot" style="left:' +
+      ((Math.max(-1, Math.min(1, m)) + 1) / 2 * 100) + '%;background:' + c + '"></i></div>' : '';
+    return '<div class="ind"><div class="between"><b>' + name + '</b><span style="color:' + c + ';font-weight:600">' + text +
+      '</span></div><div class="mono muted">' + value + '</div>' + meter + '</div>';
+  }
+
+  function viewDetail() {
+    var p = A.PAIRS[selected], r = rows[p.sym];
+    if (!r || !r.res) return header(p.sym, true) + '<p class="foot">No data yet.</p>';
+    var res = r.res, plan = A.plan(res, p, +cfg.balance, +cfg.risk);
+    var f = function (v) { return fmt(v, p.dec); };
+    var h = header(p.sym, true);
+    h += '<div class="card"><div class="between"><div><span class="big mono">' + f(res.last) + '</span><br><span class="muted">' +
+      (TFS.filter(function (t) { return t[0] === cfg.tf; })[0] || ['', ''])[1] + ' candles</span></div>' +
+      '<div class="right"><div class="mono">' + res.conf + '%</div>' + pill(res.signal) + '</div></div>' +
+      '<p class="muted">EMA 20 is ' + (res.trend > 0 ? 'above' : 'below') + ' EMA 50, the MACD histogram is ' +
+      (res.hist > 0 ? 'positive' : 'negative') + ' and RSI is ' + res.rsi.toFixed(0) + '.</p></div>';
+    h += '<div class="card"><div class="legend"><span><i style="background:#E8EEF4"></i>EMA 20</span><span><i style="background:#C58BFF"></i>EMA 50</span><span><i style="background:#6F8399"></i>Bollinger</span></div><canvas id="chart"></canvas></div>';
+    var rsiText = res.rs > 0.3 ? (res.rsi < 30 ? 'Oversold' : 'Bullish') : res.rs < -0.3 ? (res.rsi > 70 ? 'Overbought' : 'Bearish') : 'Neutral';
+    h += '<div class="card"><div class="label">Indicator readings</div>' +
+      indRow('EMA 20 / EMA 50', f(res.e20[res.e20.length - 1]) + ' / ' + f(res.e50[res.e50.length - 1]), res.trend > 0 ? 'Bullish' : 'Bearish', res.trend, true) +
+      indRow('MACD (12, 26, 9)', 'Histogram ' + (res.hist > 0 ? '+' : '') + (res.hist / p.pip).toFixed(1) + ' pips', res.mom > 0 ? 'Bullish' : 'Bearish', res.mom, true) +
+      indRow('RSI (14)', res.rsi.toFixed(1), rsiText, res.rs, true) +
+      indRow('Bollinger Bands (20, 2)', '%B ' + (res.pb * 100).toFixed(0) + '%', res.pb < 0.1 ? 'Near lower band' : res.pb > 0.9 ? 'Near upper band' : 'Mid range', res.bs * 2, true) +
+      indRow('ATR (14)', (res.atr / p.pip).toFixed(1) + ' pips per candle', 'Sets stop distance', 0, false) +
+      '<div class="between small muted"><span>Bearish</span><span>Bullish</span></div></div>';
+    if (plan) {
+      h += '<div class="card"><div class="label">Trade plan</div><div class="head2">' + (plan.dir > 0 ? 'Buy ' : 'Sell ') + p.sym + ' at market</div>' +
+        planRow('Entry', f(plan.entry), 'Last close', '#E8EEF4') +
+        planRow('Stop loss', f(plan.sl), plan.slPips.toFixed(1) + ' pips (1.5 x ATR)', ORANGE) +
+        planRow('Take profit 1', f(plan.tp1), plan.tp1Pips.toFixed(1) + ' pips (2 x ATR)', BLUE) +
+        planRow('Take profit 2', f(plan.tp2), plan.tp2Pips.toFixed(1) + ' pips (3.5 x ATR)', BLUE) +
+        planRow('Reward to risk', '1 : ' + plan.rr.toFixed(2), 'To take profit 1', '#6F8399') +
+        '<div class="size"><div><span class="mono huge">' + (plan.ok ? plan.lots.toFixed(2) : '-') + '</span> <span class="muted">lots</span></div>' +
+        '<div class="muted small">' + (plan.ok ? 'Risking about $' + money(plan.riskUsd) + ' on ' + plan.slPips.toFixed(1) + ' pips' : 'Set balance and risk in Settings') + '</div></div>' +
+        '<p class="foot">Assumes about $' + p.pv.toFixed(2) + ' per pip per lot. Check your broker’s contract size before sizing a real trade.</p></div>';
+    } else {
+      h += '<div class="card"><div class="label">Trade plan</div><div class="head2">No trade right now</div>' +
+        '<p class="muted">Trend and momentum disagree on ' + p.sym + ' at this timeframe. Wait for EMA 20 and the MACD histogram to point the same way, or switch timeframe.</p></div>';
+    }
+    return h;
+  }
+
+  function planRow(label, value, sub, color) {
+    return '<div class="prow"><span><i class="sw" style="background:' + color + '"></i>' + label + '</span><span class="right"><span class="mono">' +
+      value + '</span><span class="muted small">' + sub + '</span></span></div>';
+  }
+
+  function viewSettings() {
+    return header('Settings', true).replace('<button class="icon" data-act="settings" aria-label="Settings">Settings</button>', '') +
+      '<div class="card form">' +
+      '<label for="f-key">Twelve Data API key</label><input id="f-key" type="password" autocomplete="off" value="' + cfg.key + '" placeholder="Leave empty for demo data">' +
+      '<label for="f-bal">Account balance (USD)</label><input id="f-bal" type="number" inputmode="decimal" value="' + cfg.balance + '">' +
+      '<label for="f-risk">Risk per trade (%)</label><input id="f-risk" type="number" inputmode="decimal" step="0.25" value="' + cfg.risk + '">' +
+      '<label for="f-every">Check for signals every (minutes)</label><input id="f-every" type="number" inputmode="numeric" min="1" value="' + cfg.every + '">' +
+      '<button class="primary" data-act="save">Save</button>' +
+      '<button class="ghost" data-act="perm">Turn on notifications</button>' +
+      '<button class="ghost" data-act="test">Send a test notification</button>' +
+      '<p class="foot" id="f-msg"></p>' +
+      '<p class="foot">Alerts arrive while the app is open or running in the background. Android can pause background apps, so for alerts that never miss, also run the Telegram alert script included in this project.</p></div>';
+  }
+
+  function render() {
+    var scrollY = window.scrollY;
+    $app.innerHTML = screen === 'list' ? viewList() : screen === 'detail' ? viewDetail() : viewSettings();
+    if (screen === 'detail') {
+      var p = A.PAIRS[selected], r = rows[p.sym], c = document.getElementById('chart');
+      if (c && r && r.res) drawChart(c, p, r);
+    }
+    window.scrollTo(0, scrollY);
+  }
+
+  /* ---------- events ---------- */
+  $app.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t) return;
+    if (t.dataset.pair != null) { selected = +t.dataset.pair; screen = 'detail'; window.scrollTo(0, 0); return render(); }
+    if (t.dataset.tf) { cfg.tf = t.dataset.tf; save('cfg', cfg); rows = {}; render(); return refresh(); }
+    var act = t.dataset.act;
+    if (act === 'back') { screen = 'list'; return render(); }
+    if (act === 'settings') { screen = 'settings'; window.scrollTo(0, 0); return render(); }
+    if (act === 'run') return refresh();
+    if (act === 'save') {
+      cfg.key = document.getElementById('f-key').value.trim();
+      cfg.balance = +document.getElementById('f-bal').value || 0;
+      cfg.risk = +document.getElementById('f-risk').value || 0;
+      cfg.every = Math.max(1, +document.getElementById('f-every').value || 15);
+      save('cfg', cfg); schedule(); rows = {};
+      screen = 'list'; render(); return refresh();
+    }
+    var msg = document.getElementById('f-msg');
+    if (act === 'perm') {
+      return askPermission().then(function (ok) { msg.textContent = ok ? 'Notifications are on.' : 'Notifications are blocked. Allow them in your phone settings.'; });
+    }
+    if (act === 'test') {
+      return askPermission().then(function (ok) {
+        if (!ok) { msg.textContent = 'Notifications are blocked. Allow them in your phone settings.'; return; }
+        return notify('Signal Desk', 'Test alert: notifications work.').then(function () { msg.textContent = 'Sent.'; });
+      });
+    }
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && !demoMode()) refresh();
+  });
+
+  schedule();
+  render();
+  refresh();
+})();
+
+</script>
+<script>
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").catch(function () {}); }
+</script>
 </body>
 </html>
-
-}
