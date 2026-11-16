@@ -4,78 +4,146 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0F1822">
-<title>Signal Desk</title>
+<meta name="theme-color" content="#0B1020">
+<title>Meridian Signal</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-
 <style>
-:root{--bg:#0F1822;--panel:#16222F;--panel2:#1B2A3A;--line:#26384B;--text:#E8EEF4;--muted:#9FB0C2;--blue:#5BA4FF;--orange:#FF9A52;color-scheme:dark}
+:root{--bg:#0B1020;--panel:#131A33;--panel2:#1A2346;--line:#27325A;--text:#EEF2FF;--muted:#98A3C7;--up:#2DD4A8;--down:#FF6B8A;--amber:#FBBF24;--cyan:#22D3EE;--violet:#8B5CF6;--pink:#F472B6;--ink:#07101F;color-scheme:dark}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-#app{max-width:720px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent;
+  background:radial-gradient(520px 300px at 100% -40px,rgba(139,92,246,.30),transparent 70%),radial-gradient(460px 280px at -10% -30px,rgba(34,211,238,.20),transparent 70%),var(--bg)}
+#app{max-width:720px;margin:0 auto;padding:max(8px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) calc(96px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
-button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-.mono{font-family:ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace}
-.muted{color:var(--muted)}.small{font-size:12px}.err{color:var(--orange)}
-.spacer{flex:1}
-.bar{display:flex;align-items:center;gap:8px;padding:8px 0 12px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace}
+.muted{color:var(--muted)}.small{font-size:12px}.err{color:var(--down)}
+.spacer{flex:1}.grow{flex:1;min-width:0}
+.bar{display:flex;align-items:center;gap:10px;padding:8px 0 12px}
 .bar h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em}
-.icon{min-height:44px;min-width:44px;padding:0 10px;border-radius:8px;color:var(--muted)}
-.sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;margin-bottom:12px}
-.chip{padding:2px 10px;border:1px solid var(--line);border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.tabs{display:flex;align-items:center;gap:6px;margin-bottom:14px}
-.tab{min-height:44px;min-width:52px;padding:0 14px;border-radius:8px;border:1px solid var(--line);font-weight:600}
-.tab.on{background:var(--blue);border-color:var(--blue);color:#0F1822}
-.run{min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--blue);color:var(--blue);font-weight:600}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;flex:none}
+.bt{display:flex;flex-direction:column;line-height:1.05}
+.bt b{font-size:21px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,var(--cyan),var(--violet) 62%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bt span{font-size:10px;font-weight:700;letter-spacing:.42em;color:var(--muted);margin-top:3px}
+.icon{min-height:44px;min-width:44px;padding:0 10px;border-radius:10px;color:var(--text);font-size:20px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 11px;border:1px solid var(--line);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chip i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.chip.live{color:var(--up);border-color:#2DD4A866;background:#2DD4A814}
+.chip.closed{color:var(--amber);border-color:#FBBF2466;background:#FBBF2412}
+.chip.demo{color:var(--pink);border-color:#F472B666;background:#F472B612}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.tiles.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:520px){.tiles.four{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tile{display:flex;flex-direction:column;padding:12px 12px 10px;border-radius:14px;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line)}
+.tl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tv{font-size:28px;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums}
+.ts{font-size:11px;color:var(--muted)}
+.tabs{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.tab{min-height:44px;min-width:50px;padding:0 14px;border-radius:12px;border:1px solid var(--line);font-weight:700;background:var(--panel)}
+.tab.on{border-color:transparent;color:var(--ink);background:linear-gradient(135deg,var(--cyan),var(--violet))}
+.run{min-height:44px;margin-left:6px;padding:0 16px;border-radius:12px;border:1px solid var(--cyan);color:var(--cyan);font-weight:700}
 .run:disabled{opacity:.5}
-.list{display:flex;flex-direction:column;gap:8px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:64px;padding:10px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;text-align:left}
-button.row:active{background:var(--panel2)}
+.note{padding:12px 14px;margin-bottom:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13px;color:var(--muted)}
+.note b{color:var(--text)}
+.note.warn{border-color:#FBBF2466;background:#FBBF2410}
+.list{display:flex;flex-direction:column;gap:10px}
+.label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.sec{display:flex;align-items:center;gap:8px;margin:8px 0 0}
+.sec i{width:8px;height:8px;border-radius:50%}
+.sec span{color:var(--text)}
+.empty{padding:14px 16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13px}
+.row{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:10px 14px;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;text-align:left}
+.row.static{min-height:0}
+.row.ready{background:linear-gradient(160deg,#1E2A55,var(--panel2))}
+button.row:active{transform:scale(.99)}
+.ring{--p:0;--c:#2DD4A8;position:relative;display:inline-grid;place-items:center;flex:none;width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),#27325A 0)}
+.ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--panel)}
+.ring b{position:relative;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+.ring.lg{width:72px;height:72px}.ring.lg::before{inset:7px}.ring.lg b{font-size:20px}
 .right{display:flex;align-items:center;gap:12px}
-.pill{display:inline-block;min-width:48px;padding:4px 10px;border:1px solid;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.06em;text-align:center}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.right.col{flex-direction:column;align-items:flex-end;gap:0}
+.pill{display:inline-block;flex:none;min-width:54px;padding:5px 11px;border:1px solid;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.07em;text-align:center}
+.card{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
 .card p{margin:8px 0 0}
 .between{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.big{font-size:26px}.huge{font-size:28px;font-weight:500}
-.label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.head2{font-size:18px;font-weight:700;margin-bottom:6px}
+.between.mid{align-items:center}
+.big{font-size:28px;font-weight:700}.huge{font-size:30px;font-weight:600}
+.banner{margin-top:14px;padding:11px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font-weight:700;font-size:13px}
+.banner.go{border-color:transparent}
+.head2{font-size:18px;font-weight:800;margin-bottom:6px}
+.chk{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.chk .val{font-size:13px;text-align:right;max-width:42%}
+.mark{flex:none;min-width:46px;padding:3px 0;border-radius:8px;border:1px solid;text-align:center;font-size:11px;font-weight:800;letter-spacing:.04em}
+.mark.ok{color:var(--up);border-color:var(--up);background:#2DD4A818}
+.mark.no{color:var(--down);border-color:var(--down);background:#FF6B8A18}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:8px}
 .legend i{display:inline-block;width:14px;height:2px;margin-right:6px;vertical-align:middle}
 #chart{width:100%;height:280px;display:block}
 .ind{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
 .meter{position:relative;height:4px;border-radius:2px;background:var(--line);margin:6px 5px 2px}
-.meter .tick{position:absolute;left:50%;top:-3px;width:1px;height:10px;background:#5C7189}
+.meter .tick{position:absolute;left:50%;top:-3px;width:1px;height:10px;background:#5C6A9A}
 .meter .dot{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%}
 .prow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
-.prow .right{flex-direction:column;align-items:flex-end;gap:0}
-.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px}
-.size{margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--bg);display:flex;flex-direction:column;gap:2px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px}
+.size{margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);display:flex;flex-direction:column;gap:2px}
 .foot{font-size:12px;color:var(--muted);margin:12px 0 0}
 .form{display:flex;flex-direction:column;gap:6px}
 .form label{font-size:12px;color:var(--muted);margin-top:8px}
-.form input{width:100%;min-height:44px;padding:0 12px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:15px ui-monospace,Menlo,Consolas,monospace}
-.primary{min-height:48px;margin-top:16px;border-radius:8px;background:var(--blue);color:#0F1822;font-weight:600}
-.ghost{min-height:48px;border-radius:8px;border:1px solid var(--line);font-weight:600}
-@media (prefers-reduced-motion:no-preference){button{transition:background .15s}}
+.form input:not([type=checkbox]){width:100%;min-height:46px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:15px ui-monospace,Menlo,Consolas,monospace}
+.tog{display:flex;align-items:center;gap:10px;min-height:44px;font-size:14px!important;color:var(--text)!important}
+.tog input{width:22px;height:22px;accent-color:#22D3EE}
+.primary{min-height:50px;margin-top:16px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--violet));color:var(--ink);font-weight:800}
+.ghost{min-height:48px;border-radius:12px;border:1px solid var(--line);font-weight:700}
+.ghost.slim{min-height:44px;margin-top:8px;padding:0 16px;color:var(--amber);border-color:var(--amber)}
+.ghost.danger{width:100%;margin-top:14px;color:var(--down);border-color:#FF6B8A66}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:rgba(11,16,32,.92);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.nav button{flex:1;max-width:220px;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:14px;color:var(--muted);font-size:11px;font-weight:700}
+.nav button svg{width:22px;height:22px}
+.nav button.on{color:var(--cyan);background:linear-gradient(160deg,#1A2346,#131A33)}
+.primary.wide{width:100%;margin:0 0 14px}
+#app.chartmode{display:flex;flex-direction:column;height:100vh;height:100dvh;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+.ch{display:flex;flex-direction:column;flex:1;min-height:0;gap:6px}
+.hs{display:flex;align-items:center;gap:6px;overflow-x:auto;padding:1px 0;scrollbar-width:none;flex:none}
+.hs::-webkit-scrollbar{display:none}
+.tfs{display:flex;gap:6px;flex:none}
+.cc,.tg{flex:none;min-height:42px;padding:0 13px;border-radius:11px;border:1px solid var(--line);background:var(--panel);font-size:12px;font-weight:700;white-space:nowrap}
+.cc.on{border-color:transparent;color:var(--ink);background:linear-gradient(135deg,var(--cyan),var(--violet))}
+.tg.on{border-color:var(--cyan);color:var(--cyan);background:#22D3EE14}
+.tg.tool.on{border-color:var(--amber);color:var(--amber);background:#FBBF2414}
+.sepv{flex:none;width:1px;height:22px;background:var(--line);margin:0 4px}
+.cst{white-space:nowrap;padding-left:6px}
+.cvbox{position:relative;flex:1;min-height:200px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stat{flex:none;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13px}
+@media (orientation:landscape) and (max-height:520px){#app.chartmode{padding-bottom:8px}.chartmode .nav,.chartmode #c-stat{display:none}}
+@media (prefers-reduced-motion:no-preference){button{transition:transform .12s,background .15s}}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-/* Signal Desk analysis engine. Pure functions, no DOM. */
+/* Signal Desk analysis engine v2. Pure functions, no DOM. */
 (function (root) {
   var PAIRS = [
-    { sym: 'EUR/USD', pip: 0.0001, pv: 10,   dec: 5, base: 1.0840, vol: 0.0006, seed: 11 },
-    { sym: 'GBP/USD', pip: 0.0001, pv: 10,   dec: 5, base: 1.2610, vol: 0.0008, seed: 23 },
-    { sym: 'USD/JPY', pip: 0.01,   pv: 6.5,  dec: 3, base: 154.20, vol: 0.09,   seed: 37 },
-    { sym: 'AUD/USD', pip: 0.0001, pv: 10,   dec: 5, base: 0.6520, vol: 0.0005, seed: 41 },
-    { sym: 'USD/CAD', pip: 0.0001, pv: 7.15, dec: 5, base: 1.3980, vol: 0.0006, seed: 53 },
-    { sym: 'GBP/JPY', pip: 0.01,   pv: 6.5,  dec: 3, base: 194.30, vol: 0.12,   seed: 67 }
+    { sym: 'EUR/USD', pip: 0.0001, pv: 10,   dec: 5, base: 1.0840, vol: 0.0006, seed: 11, bias: 1 },
+    { sym: 'GBP/USD', pip: 0.0001, pv: 10,   dec: 5, base: 1.2610, vol: 0.0008, seed: 23, bias: -1 },
+    { sym: 'USD/JPY', pip: 0.01,   pv: 6.5,  dec: 3, base: 154.20, vol: 0.09,   seed: 37, bias: 1 },
+    { sym: 'AUD/USD', pip: 0.0001, pv: 10,   dec: 5, base: 0.6520, vol: 0.0005, seed: 41, bias: 0 },
+    { sym: 'USD/CAD', pip: 0.0001, pv: 7.15, dec: 5, base: 1.3980, vol: 0.0006, seed: 53, bias: 0.4 },
+    { sym: 'GBP/JPY', pip: 0.01,   pv: 6.5,  dec: 3, base: 194.30, vol: 0.12,   seed: 67, bias: -0.3 }
   ];
+
+  var TF = {
+    '1h':   { label: 'H1', ms: 3600000,  mult: 1,   htf: '4h' },
+    '4h':   { label: 'H4', ms: 14400000, mult: 1.9, htf: '1day' },
+    '1day': { label: 'D1', ms: 86400000, mult: 3.6, htf: null }
+  };
+
+  var SL_ATR = 1.5, TP1_ATR = 2.25, TP2_ATR = 3.75;   // 1:1.5 and 1:2.5 reward to risk
 
   function rng(seed) {
     var a = seed >>> 0;
@@ -89,14 +157,13 @@ button.row:active{background:var(--panel2)}
 
   /* Sample candles for demo mode, used when no API key is set. */
   function demoCandles(p, tf, runs) {
-    var mult = { '1h': 1, '4h': 1.9, '1day': 3.6 }[tf] || 1;
-    var idx = { '1h': 1, '4h': 2, '1day': 3 }[tf] || 1;
+    var mult = TF[tf].mult;
+    var idx = { '1h': 1, '4h': 2, '1day': 3 }[tf];
     var r = rng(p.seed * 977 + idx * 131 + runs * 7919);
-    var out = [], c = p.base, drift = r() - 0.5;
+    var out = [], c = p.base;
     for (var i = 0; i < 120; i++) {
-      if (i % 30 === 0) drift = r() - 0.5;
       var o = c;
-      c = o + ((r() - 0.5) * 2 + drift) * p.vol * mult;
+      c = o + ((r() - 0.5) * 2 + p.bias * 0.2) * p.vol * mult;
       var w = r() * p.vol * mult * 0.8;
       out.push({ t: i, o: o, c: c, h: Math.max(o, c) + w * r(), l: Math.min(o, c) - w * r() });
     }
@@ -121,13 +188,43 @@ button.row:active{background:var(--panel2)}
     return l === 0 ? 100 : 100 - 100 / (1 + g / l);
   }
 
-  function atr(cs, n) {
-    var tr = [], i;
-    for (i = 1; i < cs.length; i++) {
+  function trueRanges(cs) {
+    var tr = [];
+    for (var i = 1; i < cs.length; i++) {
       tr.push(Math.max(cs[i].h - cs[i].l, Math.abs(cs[i].h - cs[i - 1].c), Math.abs(cs[i].l - cs[i - 1].c)));
     }
+    return tr;
+  }
+
+  function atr(cs, n) {
+    var tr = trueRanges(cs);
     var a = tr.slice(0, n).reduce(function (x, y) { return x + y; }, 0) / n;
-    for (i = n; i < tr.length; i++) a = (a * (n - 1) + tr[i]) / n;
+    for (var i = n; i < tr.length; i++) a = (a * (n - 1) + tr[i]) / n;
+    return a;
+  }
+
+  /* Wilder's ADX. Above about 20 the market is trending, below it is drifting sideways. */
+  function adx(cs, n) {
+    var tr = trueRanges(cs), pdm = [], mdm = [], i;
+    for (i = 1; i < cs.length; i++) {
+      var up = cs[i].h - cs[i - 1].h, down = cs[i - 1].l - cs[i].l;
+      pdm.push(up > down && up > 0 ? up : 0);
+      mdm.push(down > up && down > 0 ? down : 0);
+    }
+    var sum = function (a) { return a.slice(0, n).reduce(function (x, y) { return x + y; }, 0); };
+    var sTR = sum(tr), sP = sum(pdm), sM = sum(mdm), dxs = [];
+    function dx() {
+      var pi = 100 * sP / (sTR || 1e-12), mi = 100 * sM / (sTR || 1e-12);
+      return 100 * Math.abs(pi - mi) / ((pi + mi) || 1e-12);
+    }
+    dxs.push(dx());
+    for (i = n; i < tr.length; i++) {
+      sTR = sTR - sTR / n + tr[i]; sP = sP - sP / n + pdm[i]; sM = sM - sM / n + mdm[i];
+      dxs.push(dx());
+    }
+    if (dxs.length < n) return dxs[dxs.length - 1];
+    var a = dxs.slice(0, n).reduce(function (x, y) { return x + y; }, 0) / n;
+    for (i = n; i < dxs.length; i++) a = (a * (n - 1) + dxs[i]) / n;
     return a;
   }
 
@@ -148,7 +245,7 @@ button.row:active{background:var(--panel2)}
     var macd = m12.map(function (v, i) { return v - m26[i]; });
     var sig = ema(macd, 9);
     var hist = macd[macd.length - 1] - sig[sig.length - 1];
-    var r = rsi(cl, 14), a = atr(cs, 14), bb = bands(cl);
+    var r = rsi(cl, 14), a = atr(cs, 14), ad = adx(cs, 14), bb = bands(cl);
     var last = cl[cl.length - 1];
     var u = bb.up[bb.up.length - 1], l = bb.lo[bb.lo.length - 1];
     var pb = (last - l) / ((u - l) || 1e-9);
@@ -160,7 +257,7 @@ button.row:active{background:var(--panel2)}
     return {
       signal: score >= 0.4 ? 'BUY' : score <= -0.4 ? 'SELL' : 'WAIT',
       conf: Math.round(Math.abs(score) * 100),
-      score: score, last: last, atr: a, rsi: r, hist: hist, pb: pb,
+      score: score, last: last, atr: a, adx: ad, rsi: r, hist: hist, pb: pb,
       trend: trend, mom: mom, rs: rs, bs: bs,
       e20: e20, e50: e50, bbUp: bb.up, bbLo: bb.lo
     };
@@ -169,7 +266,7 @@ button.row:active{background:var(--panel2)}
   function plan(res, pair, balance, riskPct) {
     if (res.signal === 'WAIT') return null;
     var d = res.signal === 'BUY' ? 1 : -1, e = res.last;
-    var sl = e - d * 1.5 * res.atr, tp1 = e + d * 2 * res.atr, tp2 = e + d * 3.5 * res.atr;
+    var sl = e - d * SL_ATR * res.atr, tp1 = e + d * TP1_ATR * res.atr, tp2 = e + d * TP2_ATR * res.atr;
     var slPips = Math.abs(e - sl) / pair.pip;
     var ok = balance > 0 && riskPct > 0;
     var riskUsd = ok ? balance * riskPct / 100 : 0;
@@ -177,140 +274,673 @@ button.row:active{background:var(--panel2)}
     return {
       dir: d, entry: e, sl: sl, tp1: tp1, tp2: tp2,
       slPips: slPips, tp1Pips: Math.abs(tp1 - e) / pair.pip, tp2Pips: Math.abs(tp2 - e) / pair.pip,
-      rr: Math.abs(tp1 - e) / Math.abs(e - sl), riskUsd: riskUsd, lots: lots, ok: ok
+      rr: TP1_ATR / SL_ATR, riskUsd: riskUsd, lots: lots, ok: ok
     };
   }
 
-  var api = { PAIRS: PAIRS, demoCandles: demoCandles, analyse: analyse, plan: plan };
+  /* Is this signal ready to trade? Every check must pass.
+     htf: null when no higher timeframe applies, 'pending' while it is being fetched,
+     otherwise the analyse() result of the higher timeframe.
+     opts.session: also require London / New York trading hours (07:00 to 17:00 UTC). */
+  function readiness(res, pl, htf, opts) {
+    opts = opts || {};
+    if (res.signal === 'WAIT' || !pl) {
+      return { ok: false, direction: false, checks: [], total: 0, passed: 0, waiting: 'No clear direction' };
+    }
+    var d = pl.dir, minConf = opts.minConf || 65, htfLabel = opts.htfLabel || 'higher timeframe';
+    var htfVal, htfPass;
+    if (htf === null || htf === undefined) { htfVal = 'Not needed'; htfPass = true; }
+    else if (htf === 'pending') { htfVal = 'Checking'; htfPass = false; }
+    else { htfPass = htf.trend === d; htfVal = htf.trend > 0 ? 'Bullish' : 'Bearish'; }
+    var checks = [
+      { id: 'strength', label: 'Signal strength', need: minConf + '% or more', value: res.conf + '%',
+        pass: res.conf >= minConf, waiting: 'Signal strength ' + res.conf + '%, needs ' + minConf + '%' },
+      { id: 'align', label: 'Trend and momentum agree', need: 'EMA and MACD both ' + (d > 0 ? 'up' : 'down'),
+        value: (res.trend > 0 ? 'EMA up' : 'EMA down') + ', ' + (res.mom > 0 ? 'MACD up' : 'MACD down'),
+        pass: res.trend === d && res.mom === d, waiting: 'Trend and momentum disagree' },
+      { id: 'adx', label: 'Trend strength (ADX)', need: '20 or more', value: res.adx.toFixed(0),
+        pass: res.adx >= 20, waiting: 'Trend is weak (ADX ' + res.adx.toFixed(0) + ')' },
+      { id: 'htf', label: 'Agrees with ' + htfLabel, need: 'the same direction as your trade', value: htfVal,
+        pass: htfPass, waiting: htf === 'pending' ? 'Checking ' + htfLabel : htfLabel + ' disagrees' },
+      { id: 'stretch', label: 'Not overextended', need: d > 0 ? 'RSI under 72' : 'RSI over 28', value: 'RSI ' + res.rsi.toFixed(0),
+        pass: d > 0 ? res.rsi < 72 : res.rsi > 28, waiting: 'Price looks overextended (RSI ' + res.rsi.toFixed(0) + ')' },
+      { id: 'stop', label: 'Stop wider than the spread', need: '8 pips or more', value: pl.slPips.toFixed(1) + ' pips',
+        pass: pl.slPips >= 8, waiting: 'Stop is only ' + pl.slPips.toFixed(1) + ' pips, too tight' }
+    ];
+    if (opts.session) {
+      var now = opts.now || new Date(), hh = now.getUTCHours() + now.getUTCMinutes() / 60;
+      checks.push({ id: 'session', label: 'Liquid trading hours', need: '07:00 to 17:00 UTC (London and New York)',
+        value: ('0' + now.getUTCHours()).slice(-2) + ':' + ('0' + now.getUTCMinutes()).slice(-2) + ' UTC',
+        pass: hh >= 7 && hh < 17, waiting: 'Outside London and New York hours' });
+    }
+    var failing = checks.filter(function (c) { return !c.pass; });
+    return {
+      ok: failing.length === 0, direction: true, checks: checks, failing: failing.length,
+      total: checks.length, passed: checks.length - failing.length,
+      waiting: failing.length ? failing[0].waiting : 'Ready to trade'
+    };
+  }
+
+  /* Forex closes Friday about 21:00 UTC and reopens Sunday about 22:00 UTC. */
+  function marketOpen(date) {
+    var d = date || new Date(), day = d.getUTCDay(), h = d.getUTCHours();
+    if (day === 6) return false;
+    if (day === 5 && h >= 21) return false;
+    if (day === 0 && h < 22) return false;
+    return true;
+  }
+
+  /* True when a newer candle should exist than the data fetched at fetchedAt. */
+  function due(fetchedAt, ms, now) {
+    now = now || Date.now();
+    if (!fetchedAt) return true;
+    var b = Math.floor((now - 60000) / ms) * ms;
+    return fetchedAt < b + 60000;
+  }
+
+  /* Full indicator series for charting. Arrays line up with the candles. */
+  function series(cs) {
+    var cl = cs.map(function (c) { return c.c; });
+    var bb = bands(cl), m12 = ema(cl, 12), m26 = ema(cl, 26);
+    var macd = m12.map(function (v, i) { return v - m26[i]; }), sig = ema(macd, 9);
+    var r = [], g = 0, l = 0, n = 14, i, d;
+    for (i = 0; i < cl.length; i++) r.push(null);
+    if (cl.length > n) {
+      for (i = 1; i <= n; i++) { d = cl[i] - cl[i - 1]; if (d >= 0) g += d; else l -= d; }
+      g /= n; l /= n;
+      r[n] = l === 0 ? 100 : 100 - 100 / (1 + g / l);
+      for (i = n + 1; i < cl.length; i++) {
+        d = cl[i] - cl[i - 1];
+        g = (g * (n - 1) + Math.max(d, 0)) / n; l = (l * (n - 1) + Math.max(-d, 0)) / n;
+        r[i] = l === 0 ? 100 : 100 - 100 / (1 + g / l);
+      }
+    }
+    return { e20: ema(cl, 20), e50: ema(cl, 50), bbUp: bb.up, bbLo: bb.lo, rsi: r, macd: macd, sig: sig,
+      hist: macd.map(function (v, k) { return v - sig[k]; }) };
+  }
+
+  /* Replays the live rules over past candles (no lookahead): a signal fires when a pair turns ready,
+     then is followed to take profit 1 or the stop. Both in one candle counts as a loss.
+     The higher timeframe and trading-hours checks are not replayed, so live signals are stricter. */
+  function backtest(cs, pair, opts) {
+    opts = opts || {};
+    var minConf = opts.minConf || 65, trades = [], prevReady = false, prevSig = 'WAIT', busyUntil = -1, i, j;
+    for (i = 60; i < cs.length; i++) {
+      var res = analyse(cs.slice(0, i + 1)), pl = plan(res, pair, 5000, 1);
+      var rd = readiness(res, pl, null, { minConf: minConf });
+      var fire = rd.ok && (!prevReady || prevSig !== res.signal);
+      prevReady = rd.ok; prevSig = res.signal;
+      if (!fire || i <= busyUntil) continue;
+      var out = 'open', end = cs.length;
+      for (j = i + 1; j < cs.length && j <= i + 48; j++) {
+        var c = cs[j];
+        var hitSL = pl.dir > 0 ? c.l <= pl.sl : c.h >= pl.sl, hitTP = pl.dir > 0 ? c.h >= pl.tp1 : c.l <= pl.tp1;
+        if (hitSL) { out = 'loss'; end = j; break; }
+        if (hitTP) { out = 'win'; end = j; break; }
+      }
+      if (out === 'open' && j <= cs.length - 1 + 0 && j > i + 48) { out = 'expired'; end = i + 48; }
+      trades.push({ i: i, dir: pl.dir, entry: pl.entry, sl: pl.sl, tp: pl.tp1, out: out, end: end });
+      busyUntil = out === 'open' ? cs.length : end;
+    }
+    var done = trades.filter(function (t) { return t.out === 'win' || t.out === 'loss'; });
+    var wins = done.filter(function (t) { return t.out === 'win'; }).length;
+    return { trades: trades, closed: done.length, wins: wins, rate: done.length ? Math.round(wins / done.length * 100) : 0,
+      net: done.reduce(function (a, t) { return a + (t.out === 'win' ? 1.5 : -1); }, 0) };
+  }
+
+  var api = {
+    PAIRS: PAIRS, TF: TF, demoCandles: demoCandles, analyse: analyse, plan: plan,
+    readiness: readiness, marketOpen: marketOpen, due: due, series: series, backtest: backtest
+  };
   root.Analysis = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
 
 </script>
 <script>
-/* Signal Desk UI. Talks to Twelve Data, runs Analysis, raises notifications. */
+/* Meridian interactive chart: candles, EMA, Bollinger, RSI and MACD panes, crosshair, pan and pinch zoom,
+   horizontal lines, trend lines, price alerts, trade levels and signal markers. Canvas only, no libraries. */
+(function (root) {
+  function niceStep(range, n) {
+    var raw = range / n, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+  }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  function MChart(canvas, o) {
+    this.cv = canvas; this.o = o;
+    this.cs = null; this.ser = null; this.dec = 5; this.tf = '1h';
+    this.flags = { ema: true, bb: false, rsi: false, macd: false, sig: true, lvl: true };
+    this.levels = []; this.markers = []; this.draws = []; this.tool = null; this.pending = null; this.cross = null;
+    this.barW = 9; this.right = 0; this.fitted = false;
+    this.ptrs = {}; this.drag = null; this.pinch = null; this.sc = null;
+    var self = this;
+    canvas.style.touchAction = 'none';
+    canvas.addEventListener('pointerdown', function (e) { self.down(e); });
+    canvas.addEventListener('pointermove', function (e) { self.move(e); });
+    canvas.addEventListener('pointerup', function (e) { self.up(e); });
+    canvas.addEventListener('pointercancel', function (e) { self.up(e, true); });
+    canvas.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var r = canvas.getBoundingClientRect();
+      self.zoomAt(e.clientX - r.left, e.deltaY < 0 ? 1.12 : 1 / 1.12);
+    }, { passive: false });
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(function () { self.draw(); }).observe(canvas);
+  }
+
+  MChart.prototype.setData = function (cs, ser, dec, tf, keepView) {
+    var first = !this.cs || !keepView;
+    this.cs = cs; this.ser = ser; this.dec = dec; this.tf = tf;
+    if (first) this.reset(); else this.right = clamp(this.right, 5, this.cs.length - 1 + 60);
+    this.draw();
+  };
+  MChart.prototype.reset = function () {
+    var W = this.cv.clientWidth || 360, n = this.cs ? this.cs.length : 0;
+    this.barW = clamp((W - 62) / Math.min(70, Math.max(n, 20)), 3, 14);
+    this.right = n - 1 + 6;
+    this.cross = null; this.pending = null;
+  };
+  MChart.prototype.layout = function () { return { W: this.cv.clientWidth, H: this.cv.clientHeight, axisW: 62, timeH: 22 }; };
+  MChart.prototype.clampRight = function () {
+    var L = this.layout(), plotW = L.W - L.axisW, n = this.cs.length, vis = plotW / this.barW;
+    this.right = clamp(this.right, Math.min(n - 1, vis * 0.35), n - 1 + Math.max(3, vis * 0.5));
+  };
+  MChart.prototype.zoomAt = function (ax, factor) {
+    if (!this.cs) return;
+    var L = this.layout(), plotW = L.W - L.axisW, ax2 = Math.min(ax, plotW);
+    var i0 = this.right + 0.5 - (plotW - ax2) / this.barW;
+    this.barW = clamp(this.barW * factor, 2.5, 40);
+    this.right = i0 - 0.5 + (plotW - ax2) / this.barW;
+    this.clampRight(); this.draw();
+  };
+
+  /* ----- input ----- */
+  MChart.prototype.pos = function (e) { var r = this.cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  MChart.prototype.down = function (e) {
+    this.cv.setPointerCapture && this.cv.setPointerCapture(e.pointerId);
+    var p = this.pos(e); this.ptrs[e.pointerId] = p;
+    var ids = Object.keys(this.ptrs);
+    if (ids.length === 1) this.drag = { x0: p.x, y0: p.y, right0: this.right, moved: false };
+    else if (ids.length === 2) {
+      var a = this.ptrs[ids[0]], b = this.ptrs[ids[1]];
+      this.pinch = { d0: Math.hypot(a.x - b.x, a.y - b.y) || 1, bw0: this.barW, mx: (a.x + b.x) / 2 };
+      var L = this.layout(), plotW = L.W - L.axisW;
+      this.pinch.i0 = this.right + 0.5 - (plotW - Math.min(this.pinch.mx, plotW)) / this.barW;
+      this.drag = null;
+    }
+  };
+  MChart.prototype.move = function (e) {
+    if (!this.ptrs[e.pointerId]) return;
+    var p = this.pos(e); this.ptrs[e.pointerId] = p;
+    var ids = Object.keys(this.ptrs), L = this.layout(), plotW = L.W - L.axisW;
+    if (ids.length >= 2 && this.pinch) {
+      var a = this.ptrs[ids[0]], b = this.ptrs[ids[1]], d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      this.barW = clamp(this.pinch.bw0 * d / this.pinch.d0, 2.5, 40);
+      this.right = this.pinch.i0 - 0.5 + (plotW - Math.min(this.pinch.mx, plotW)) / this.barW;
+      this.clampRight(); this.draw();
+    } else if (this.drag) {
+      var dx = p.x - this.drag.x0;
+      if (Math.abs(dx) > 5 || Math.abs(p.y - this.drag.y0) > 5) this.drag.moved = true;
+      if (this.drag.moved) { this.right = this.drag.right0 - dx / this.barW; this.clampRight(); this.draw(); }
+    }
+  };
+  MChart.prototype.up = function (e, cancel) {
+    var p = this.ptrs[e.pointerId] || this.pos(e), was = this.drag, n = Object.keys(this.ptrs).length;
+    delete this.ptrs[e.pointerId];
+    if (n === 2) { this.pinch = null; var k = Object.keys(this.ptrs)[0]; if (k) this.drag = { x0: this.ptrs[k].x, y0: this.ptrs[k].y, right0: this.right, moved: true }; return; }
+    this.drag = null; this.pinch = null;
+    if (!cancel && was && !was.moved) this.tap(p.x, p.y);
+  };
+  MChart.prototype.price = function (y) { var s = this.sc; return s ? s.hi - (y - s.top) / s.h * (s.hi - s.lo) : null; };
+  MChart.prototype.indexAt = function (x) {
+    var L = this.layout(), plotW = L.W - L.axisW;
+    return clamp(Math.round(this.right + 0.5 - (plotW - x) / this.barW), 0, this.cs.length - 1);
+  };
+  MChart.prototype.tap = function (x, y) {
+    if (!this.cs) return;
+    var L = this.layout(), s = this.sc;
+    if (x > L.W - L.axisW) { this.cross = null; this.draw(); return; }
+    var inMain = s && y >= s.top && y <= s.top + s.h;
+    if (this.tool && inMain) {
+      var pr = this.price(y), last = this.cs[this.cs.length - 1], ix = this.indexAt(x);
+      if (this.tool === 'h' || this.tool === 'alert') {
+        var d = { type: 'h', price: pr };
+        if (this.tool === 'alert') { d.alert = true; d.t = String(last.t); d.tf = this.tf; d.dir = pr > last.c ? 1 : -1; d.fired = false; }
+        this.draws.push(d); this.tool = null; if (this.o.onDraws) this.o.onDraws(this.draws); if (this.o.onTool) this.o.onTool(null);
+      } else if (this.tool === 't') {
+        if (!this.pending) this.pending = { t: String(this.cs[ix].t), price: pr };
+        else {
+          this.draws.push({ type: 't', a: this.pending, b: { t: String(this.cs[ix].t), price: pr } });
+          this.pending = null; this.tool = null; if (this.o.onDraws) this.o.onDraws(this.draws); if (this.o.onTool) this.o.onTool(null);
+        }
+      }
+      this.draw(); return;
+    }
+    this.cross = { x: x, y: y }; this.draw();
+  };
+
+  /* ----- drawing ----- */
+  MChart.prototype.draw = function () {
+    var cv = this.cv, dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+    if (!W || !H) return;
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    var g = cv.getContext('2d'), C = this.o.colors, F = this.flags, self = this;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
+    var cs = this.cs;
+    if (!cs || cs.length < 2) { g.fillStyle = C.muted; g.font = '14px sans-serif'; g.fillText('Loading prices...', 16, 32); return; }
+    var L = this.layout(), axisW = L.axisW, timeH = L.timeH, plotW = W - axisW, n = cs.length, bw = this.barW;
+    var subs = []; if (F.rsi) subs.push('rsi'); if (F.macd) subs.push('macd');
+    var subH = subs.length ? Math.min(120, Math.floor((H - timeH) * (subs.length > 1 ? 0.2 : 0.26))) : 0;
+    var mainH = H - timeH - subH * subs.length;
+    this.clampRight();
+    var xc = function (i) { return plotW - (self.right - i + 0.5) * bw; };
+    var i0 = Math.max(0, Math.floor(this.right + 0.5 - plotW / bw) - 1), i1 = Math.min(n - 1, Math.ceil(this.right + 0.5));
+    var S = this.ser, hi = -Infinity, lo = Infinity, i;
+    for (i = i0; i <= i1; i++) {
+      hi = Math.max(hi, cs[i].h); lo = Math.min(lo, cs[i].l);
+      if (S && F.ema) { hi = Math.max(hi, S.e20[i], S.e50[i]); lo = Math.min(lo, S.e20[i], S.e50[i]); }
+      if (S && F.bb) { hi = Math.max(hi, S.bbUp[i]); lo = Math.min(lo, S.bbLo[i]); }
+    }
+    if (!isFinite(hi)) return;
+    var pad = (hi - lo) * 0.08 || hi * 0.0005; hi += pad; lo -= pad;
+    var Y = function (v) { return (hi - v) / (hi - lo) * mainH; };
+    this.sc = { top: 0, h: mainH, hi: hi, lo: lo };
+    var dec = this.dec;
+
+    g.font = '11px ui-monospace,Menlo,Consolas,monospace'; g.textBaseline = 'middle';
+    var step = niceStep(hi - lo, Math.max(3, Math.floor(mainH / 70)));
+    g.lineWidth = 1;
+    for (var v = Math.ceil(lo / step) * step; v < hi; v += step) {
+      var y = Math.round(Y(v)) + 0.5;
+      g.strokeStyle = C.grid; g.beginPath(); g.moveTo(0, y); g.lineTo(plotW, y); g.stroke();
+      g.fillStyle = C.muted; g.textAlign = 'left'; g.fillText(v.toFixed(dec), plotW + 6, y);
+    }
+    // time grid and labels
+    var every = Math.max(1, Math.ceil(78 / bw)), tfmt = this.o.timeLabel;
+    g.textAlign = 'center';
+    for (i = Math.ceil(i0 / every) * every; i <= i1; i += every) {
+      var x = Math.round(xc(i)) + 0.5;
+      if (x < 30) continue;
+      g.strokeStyle = C.grid; g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H - timeH); g.stroke();
+      g.fillStyle = C.muted; g.fillText(tfmt(cs[i].t, this.tf), x, H - timeH / 2);
+    }
+
+    g.save(); g.beginPath(); g.rect(0, 0, plotW, mainH); g.clip();
+    if (S && F.bb) {
+      g.fillStyle = C.bbFill; g.beginPath();
+      for (i = i0; i <= i1; i++) { if (i === i0) g.moveTo(xc(i), Y(S.bbUp[i])); else g.lineTo(xc(i), Y(S.bbUp[i])); }
+      for (i = i1; i >= i0; i--) g.lineTo(xc(i), Y(S.bbLo[i]));
+      g.closePath(); g.fill();
+      this.line(g, S.bbUp, i0, i1, xc, Y, C.bb, 1, [4, 4]); this.line(g, S.bbLo, i0, i1, xc, Y, C.bb, 1, [4, 4]);
+    }
+    var body = Math.max(1, bw * 0.72);
+    for (i = i0; i <= i1; i++) {
+      var c = cs[i], col = c.c >= c.o ? C.up : C.down, x2 = xc(i);
+      g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 1;
+      g.beginPath(); g.moveTo(Math.round(x2) + 0.5, Y(c.h)); g.lineTo(Math.round(x2) + 0.5, Y(c.l)); g.stroke();
+      g.fillRect(x2 - body / 2, Y(Math.max(c.o, c.c)), body, Math.max(1, Math.abs(Y(c.o) - Y(c.c))));
+    }
+    if (S && F.ema) { this.line(g, S.e50, i0, i1, xc, Y, C.ema50, 1.6); this.line(g, S.e20, i0, i1, xc, Y, C.ema20, 1.6); }
+
+    if (F.sig) {
+      this.markers.forEach(function (m) {
+        if (m.i < i0 || m.i > i1) return;
+        var x3 = xc(m.i), up = m.dir > 0, yy = up ? Y(cs[m.i].l) + 8 : Y(cs[m.i].h) - 8, s2 = Math.max(5, Math.min(9, bw));
+        g.fillStyle = up ? C.up : C.down; g.beginPath();
+        if (up) { g.moveTo(x3, yy - s2); g.lineTo(x3 - s2, yy + s2 * 0.7); g.lineTo(x3 + s2, yy + s2 * 0.7); }
+        else { g.moveTo(x3, yy + s2); g.lineTo(x3 - s2, yy - s2 * 0.7); g.lineTo(x3 + s2, yy - s2 * 0.7); }
+        g.closePath(); g.fill();
+        if (m.out === 'win' || m.out === 'loss') {
+          g.fillStyle = m.out === 'win' ? C.up : C.down; g.font = 'bold 9px sans-serif'; g.textAlign = 'center';
+          g.fillText(m.out === 'win' ? 'W' : 'L', x3, up ? yy + s2 + 9 : yy - s2 - 9); g.font = '11px ui-monospace,Menlo,Consolas,monospace';
+        }
+      });
+    }
+    g.restore();
+
+    // trade levels and drawings sit over the plot, labels on the axis
+    var tag = function (price, label, color, dash, textColor) {
+      var yy = clamp(Y(price), 9, mainH - 9), off = yy !== Y(price);
+      g.save(); g.beginPath(); g.rect(0, 0, plotW, mainH); g.clip();
+      g.strokeStyle = color; g.lineWidth = 1.3; g.setLineDash(dash || []); g.beginPath(); g.moveTo(0, yy); g.lineTo(plotW, yy); g.stroke(); g.restore();
+      g.setLineDash([]); g.fillStyle = color; g.fillRect(plotW + 1, yy - 8, axisW - 1, 16);
+      g.fillStyle = textColor || C.ink; g.textAlign = 'left'; g.font = 'bold 10px ui-monospace,Menlo,Consolas,monospace';
+      g.fillText((off ? (Y(price) < 0 ? '^ ' : 'v ') : '') + label, plotW + 4, yy); g.font = '11px ui-monospace,Menlo,Consolas,monospace';
+    };
+    if (F.lvl) this.levels.forEach(function (l) { tag(l.price, l.label, l.color, l.dash); });
+    this.draws.forEach(function (d) {
+      if (d.type === 'h') {
+        tag(d.price, d.alert ? (d.fired ? 'DONE' : 'ALERT') : d.price.toFixed(dec), d.alert ? C.cyan : C.amber, [5, 4]);
+      } else if (d.type === 't') {
+        var ia = self.findIdx(d.a.t), ib = self.findIdx(d.b.t);
+        if (ia < 0 || ib < 0) return;
+        g.save(); g.beginPath(); g.rect(0, 0, plotW, mainH); g.clip();
+        g.strokeStyle = C.amber; g.lineWidth = 1.8; g.beginPath(); g.moveTo(xc(ia), Y(d.a.price)); g.lineTo(xc(ib), Y(d.b.price)); g.stroke();
+        g.fillStyle = C.amber; [[ia, d.a.price], [ib, d.b.price]].forEach(function (q) { g.beginPath(); g.arc(xc(q[0]), Y(q[1]), 3.5, 0, 7); g.fill(); });
+        g.restore();
+      }
+    });
+    if (this.pending) {
+      var ip = this.findIdx(this.pending.t);
+      if (ip >= 0) { g.fillStyle = C.amber; g.beginPath(); g.arc(xc(ip), Y(this.pending.price), 5, 0, 7); g.fill(); }
+    }
+    // last price
+    var lc = cs[n - 1], lcol = lc.c >= lc.o ? C.up : C.down;
+    var nearLevel = F.lvl && this.levels.some(function (l) { return Math.abs(l.price - lc.c) < (hi - lo) * 0.004; });
+    if (!nearLevel) tag(lc.c, lc.c.toFixed(dec), lcol, [2, 3]);
+
+    // sub panes
+    var top = mainH;
+    subs.forEach(function (kind) {
+      g.strokeStyle = C.line; g.lineWidth = 1; g.beginPath(); g.moveTo(0, top + 0.5); g.lineTo(W, top + 0.5); g.stroke();
+      g.save(); g.beginPath(); g.rect(0, top, plotW, subH); g.clip();
+      g.fillStyle = C.muted; g.textAlign = 'left'; g.font = 'bold 10px sans-serif';
+      if (kind === 'rsi') {
+        var yr = function (v) { return top + 6 + (100 - v) / 100 * (subH - 12); };
+        g.fillStyle = C.zone; g.fillRect(0, yr(70), plotW, yr(30) - yr(70));
+        g.strokeStyle = C.grid; [30, 70].forEach(function (lv) { g.beginPath(); g.moveTo(0, yr(lv)); g.lineTo(plotW, yr(lv)); g.stroke(); });
+        g.strokeStyle = C.violet; g.lineWidth = 1.5; g.beginPath(); var started = false;
+        for (i = i0; i <= i1; i++) { if (S.rsi[i] == null) continue; if (!started) { g.moveTo(xc(i), yr(S.rsi[i])); started = true; } else g.lineTo(xc(i), yr(S.rsi[i])); }
+        g.stroke(); g.restore();
+        g.fillStyle = C.muted; g.font = 'bold 10px sans-serif'; g.textAlign = 'left'; g.fillText('RSI 14', 6, top + 12);
+        g.font = '11px ui-monospace,Menlo,Consolas,monospace'; g.fillText(S.rsi[n - 1] == null ? '' : S.rsi[n - 1].toFixed(1), plotW + 6, top + subH / 2);
+      } else {
+        var mx = 1e-12; for (i = i0; i <= i1; i++) mx = Math.max(mx, Math.abs(S.hist[i]), Math.abs(S.macd[i]), Math.abs(S.sig[i]));
+        var mid = top + subH / 2, ym = function (v) { return mid - v / mx * (subH / 2 - 8); };
+        g.strokeStyle = C.grid; g.beginPath(); g.moveTo(0, mid); g.lineTo(plotW, mid); g.stroke();
+        for (i = i0; i <= i1; i++) { g.fillStyle = S.hist[i] >= 0 ? C.up : C.down; var y0 = ym(0), y1 = ym(S.hist[i]); g.globalAlpha = 0.75; g.fillRect(xc(i) - body / 2, Math.min(y0, y1), body, Math.max(1, Math.abs(y1 - y0))); g.globalAlpha = 1; }
+        var arr = function (a, col) { g.strokeStyle = col; g.lineWidth = 1.4; g.beginPath(); for (var k = i0; k <= i1; k++) { if (k === i0) g.moveTo(xc(k), ym(a[k])); else g.lineTo(xc(k), ym(a[k])); } g.stroke(); };
+        arr(S.macd, C.cyan); arr(S.sig, C.amber); g.restore();
+        g.fillStyle = C.muted; g.font = 'bold 10px sans-serif'; g.textAlign = 'left'; g.fillText('MACD 12 26 9', 6, top + 12);
+      }
+      top += subH;
+    });
+
+    // axes frame
+    g.strokeStyle = C.line; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(plotW + 0.5, 0); g.lineTo(plotW + 0.5, H - timeH); g.moveTo(0, H - timeH + 0.5); g.lineTo(W, H - timeH + 0.5); g.stroke();
+
+    // crosshair and readout
+    if (this.cross) {
+      var ci = this.indexAt(this.cross.x), cx = xc(ci), cy = this.cross.y, bar = cs[ci];
+      g.strokeStyle = C.text; g.globalAlpha = 0.55; g.setLineDash([4, 4]); g.lineWidth = 1;
+      g.beginPath(); g.moveTo(Math.round(cx) + 0.5, 0); g.lineTo(Math.round(cx) + 0.5, H - timeH); g.stroke();
+      if (cy < mainH) { g.beginPath(); g.moveTo(0, Math.round(cy) + 0.5); g.lineTo(plotW, Math.round(cy) + 0.5); g.stroke(); }
+      g.setLineDash([]); g.globalAlpha = 1;
+      if (cy < mainH) { g.fillStyle = C.text; g.fillRect(plotW + 1, cy - 8, axisW - 1, 16); g.fillStyle = C.ink; g.textAlign = 'left'; g.font = 'bold 10px ui-monospace,Menlo,Consolas,monospace'; g.fillText(this.price(cy).toFixed(dec), plotW + 4, cy); }
+      var tl = tfmt(bar.t, this.tf), tw = g.measureText(tl).width + 12;
+      g.fillStyle = C.text; g.fillRect(clamp(cx - tw / 2, 0, plotW - tw), H - timeH + 1, tw, timeH - 2);
+      g.fillStyle = C.ink; g.textAlign = 'center'; g.font = 'bold 10px ui-monospace,Menlo,Consolas,monospace'; g.fillText(tl, clamp(cx, tw / 2, plotW - tw / 2), H - timeH / 2);
+      var chg = bar.c - bar.o, txt = 'O ' + bar.o.toFixed(dec) + '  H ' + bar.h.toFixed(dec) + '  L ' + bar.l.toFixed(dec) + '  C ' + bar.c.toFixed(dec);
+      g.font = '11px ui-monospace,Menlo,Consolas,monospace'; g.textAlign = 'left';
+      var rw = g.measureText(txt).width + 16;
+      g.fillStyle = C.panel; g.globalAlpha = 0.92; g.fillRect(6, 6, rw, 24); g.globalAlpha = 1;
+      g.fillStyle = chg >= 0 ? C.up : C.down; g.fillText(txt, 14, 18);
+    }
+    if (this.tool) {
+      var hint = this.tool === 'h' ? 'Tap the chart to place a line' : this.tool === 'alert' ? 'Tap the chart to set a price alert' : (this.pending ? 'Tap the second point' : 'Tap the first point of the trend line');
+      g.font = 'bold 12px sans-serif'; g.textAlign = 'center'; var hw = g.measureText(hint).width + 24;
+      g.fillStyle = C.amber; g.fillRect(plotW / 2 - hw / 2, mainH - 34, hw, 24); g.fillStyle = C.ink; g.fillText(hint, plotW / 2, mainH - 22);
+    }
+  };
+  MChart.prototype.line = function (g, arr, i0, i1, xc, Y, color, w, dash) {
+    g.strokeStyle = color; g.lineWidth = w; g.setLineDash(dash || []); g.beginPath();
+    for (var i = i0; i <= i1; i++) { if (i === i0) g.moveTo(xc(i), Y(arr[i])); else g.lineTo(xc(i), Y(arr[i])); }
+    g.stroke(); g.setLineDash([]);
+  };
+  MChart.prototype.findIdx = function (t) {
+    for (var i = 0; i < this.cs.length; i++) if (String(this.cs[i].t) === String(t)) return i;
+    return -1;
+  };
+
+  root.MChart = MChart;
+})(window);
+
+</script>
+<script>
+/* Meridian Signal UI. Downloads prices only when a new candle has closed, grades every
+   signal with strict checks, notifies when a trade is ready, and logs the result of every
+   ready signal so the track record is visible. */
 (function () {
   var A = window.Analysis;
-  var BLUE = '#5BA4FF', ORANGE = '#FF9A52', MUTED = '#9FB0C2';
+  var UP = '#2DD4A8', DOWN = '#FF6B8A', MUTED = '#98A3C7', INK = '#07101F', AMBER = '#FBBF24';
+  var CYAN = '#22D3EE', VIOLET = '#8B5CF6', PINK = '#F472B6';
   var TFS = [['1h', 'H1'], ['4h', 'H4'], ['1day', 'D1']];
 
   function load(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
-  var cfg = Object.assign({ key: '', balance: 5000, risk: 1, tf: '1h', every: 15 }, load('cfg', {}));
-  var notified = load('notified', {});
-  var rows = {};           // symbol -> { cs, res, error }
-  var runs = 0;
-  var selected = 0;
-  var screen = 'list';     // list | detail | settings
-  var busy = false;
-  var statusText = '';
-  var timer = null;
+  var cfg = Object.assign({ key: '', balance: 5000, risk: 1, tf: '1h', every: 5, minConf: 65, alerts: true }, load('ms_cfg', {}));
+  var readyState = load('ms_ready', {});   // "EUR/USD|1h" -> { ready, sig }
+  var lastPing = load('ms_ping', {});      // "EUR/USD|1h" -> { sig, at }
+  var track = load('ms_track', []);        // every signal that reached Ready, followed to its result
+  var store = {};                          // "EUR/USD|1h" -> { cs, at, error }
+  var evals = {};                          // "EUR/USD" -> { res, plan, ready } for the current timeframe
+  var runs = 26, selected = 0, screen = 'list', busy = false, statusText = '', timer = null, perm = 'unknown', clearArmed = false;
+  var calls = [];
+  var draws = load('ms_draw', {});         // "EUR/USD" -> drawings, lines and price alerts
+  var chartFlags = Object.assign({ ema: true, bb: false, rsi: false, macd: false, sig: true, lvl: true }, load('ms_chart', {}));
+  var chartInst = null, chartKey = null, btCache = {}, serCache = {};
+  var CH = { bg: '#0B1020', panel: '#131A33', grid: '#1B2448', line: '#27325A', text: '#EEF2FF', muted: MUTED, up: UP, down: DOWN, cyan: CYAN,
+    violet: '#A78BFA', amber: AMBER, ink: INK, ema20: '#EEF2FF', ema50: '#A78BFA', bb: '#6B79A8', bbFill: 'rgba(107,121,168,.12)', zone: 'rgba(139,92,246,.10)' };
 
   var $app = document.getElementById('app');
 
   function fmt(v, d) { return Number(v).toFixed(d); }
   function money(v) { return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-  function pill(sig) {
-    var c = sig === 'BUY' ? BLUE : sig === 'SELL' ? ORANGE : MUTED;
-    return '<span class="pill" style="color:' + c + ';border-color:' + c + '">' + sig + '</span>';
-  }
   function demoMode() { return !cfg.key; }
+  function tfLabel(tf) { return A.TF[tf].label; }
+  function sigColor(s) { return s === 'BUY' ? UP : s === 'SELL' ? DOWN : MUTED; }
+  function sigGrad(s) { return s === 'BUY' ? 'linear-gradient(90deg,' + UP + ',' + CYAN + ')' : 'linear-gradient(90deg,' + DOWN + ',' + PINK + ')'; }
 
   /* ---------- notifications ---------- */
   function LN() { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications; }
 
+  function checkPermission() {
+    var ln = LN();
+    if (ln && ln.checkPermissions) return ln.checkPermissions().then(function (r) { perm = r.display; }).catch(function () {});
+    if ('Notification' in window) perm = Notification.permission;
+    return Promise.resolve();
+  }
   function askPermission() {
     var ln = LN();
-    if (ln) return ln.requestPermissions().then(function (r) { return r.display === 'granted'; });
-    if ('Notification' in window) return Notification.requestPermission().then(function (p) { return p === 'granted'; });
-    return Promise.resolve(false);
+    var p = ln ? ln.requestPermissions().then(function (r) { return r.display === 'granted'; })
+      : ('Notification' in window ? Notification.requestPermission().then(function (x) { return x === 'granted'; }) : Promise.resolve(false));
+    return p.then(function (ok) { perm = ok ? 'granted' : 'denied'; return ok; });
   }
-
   function notify(title, body) {
     var ln = LN();
-    if (ln) {
-      return ln.schedule({ notifications: [{ id: Math.floor(Date.now() % 2147483000), title: title, body: body }] });
-    }
+    if (ln) return ln.schedule({ notifications: [{ id: Math.floor(Date.now() % 2147483000), title: title, body: body }] });
     if ('serviceWorker' in navigator && 'Notification' in window && Notification.permission === 'granted') {
       return navigator.serviceWorker.ready.then(function (reg) {
-        return reg.showNotification(title, { body: body, icon: 'icon-192.png', badge: 'icon-192.png', vibrate: [200, 100, 200] });
+        return reg.showNotification(title, { body: body, icon: 'icon-192.png', badge: 'icon-192.png', vibrate: [200, 100, 200], tag: title });
       }).catch(function () { try { new Notification(title, { body: body }); } catch (e) {} });
     }
     return Promise.resolve();
   }
 
   /* ---------- data ---------- */
-  function fetchCandles(pair) {
-    var url = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(pair.sym) +
-      '&interval=' + cfg.tf + '&outputsize=150&apikey=' + encodeURIComponent(cfg.key);
-    return fetch(url).then(function (r) { return r.json(); }).then(function (j) {
-      if (j.status !== 'ok' || !j.values) throw new Error(j.message || 'No data');
-      var cs = j.values.slice().reverse().map(function (v) {
-        return { t: v.datetime, o: +v.open, h: +v.high, l: +v.low, c: +v.close };
-      });
-      return cs.slice(0, -1); // drop the candle that is still forming
+  function throttle() {   // free Twelve Data keys allow 8 calls a minute, stay at 7
+    return new Promise(function (resolve) {
+      (function tick() {
+        var now = Date.now();
+        calls = calls.filter(function (t) { return now - t < 60000; });
+        if (calls.length < 7) { calls.push(now); resolve(); } else setTimeout(tick, 60000 - (now - calls[0]) + 50);
+      })();
     });
   }
 
-  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
-
-  function maybeAlert(pair, cs, res) {
-    if (res.signal === 'WAIT' || cs.length < 60) return;
-    var prev = A.analyse(cs.slice(0, -1));
-    if (prev.signal === res.signal) return;
-    var stamp = String(cs[cs.length - 1].t);
-    var key = pair.sym + '|' + cfg.tf;
-    if (notified[key] === stamp + res.signal) return;
-    notified[key] = stamp + res.signal;
-    save('notified', notified);
-    var p = A.plan(res, pair, +cfg.balance, +cfg.risk);
-    notify(res.signal + ' ' + pair.sym + ' (' + cfg.tf + ')',
-      'Entry ' + fmt(p.entry, pair.dec) + '  SL ' + fmt(p.sl, pair.dec) + '  TP ' + fmt(p.tp1, pair.dec) +
-      '  Size ' + p.lots.toFixed(2) + ' lots');
+  function fetchCandles(pair, tf) {
+    return throttle().then(function () {
+      var url = 'https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(pair.sym) +
+        '&interval=' + tf + '&outputsize=300&apikey=' + encodeURIComponent(cfg.key);
+      return fetch(url);
+    }).then(function (r) { return r.json(); }).then(function (j) {
+      if (j.status !== 'ok' || !j.values) throw new Error(j.message || 'No data');
+      var cs = j.values.slice().reverse().map(function (v) { return { t: v.datetime, o: +v.open, h: +v.high, l: +v.low, c: +v.close }; });
+      return cs.slice(0, -1);   // drop the candle that is still forming
+    });
   }
 
-  function refresh() {
+  function stamp(cs, tf) {   // give sample candles real-looking UTC times
+    var ms = A.TF[tf].ms, end = Math.floor(Date.now() / ms) * ms;
+    return cs.map(function (c, i) { c.t = new Date(end - (cs.length - 1 - i) * ms).toISOString().slice(0, 19).replace('T', ' '); return c; });
+  }
+  function timeLabel(t, tf) {
+    var m = String(t).match(/^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}))?/);
+    if (!m) return String(t);
+    return tf === '1day' || !m[4] ? m[3] + '/' + m[2] : m[3] + ' ' + m[4] + ':' + m[5];
+  }
+
+  /* Returns the candles for pair and timeframe, refetching only when a new candle should exist. */
+  function candles(pair, tf, force) {
+    var key = pair.sym + '|' + tf, hit = store[key];
+    if (demoMode()) {
+      if (!hit || force) store[key] = { cs: stamp(A.demoCandles(pair, tf, runs), tf), at: Date.now() };
+      return Promise.resolve(store[key]);
+    }
+    if (hit && !hit.error && !force && !A.due(hit.at, A.TF[tf].ms)) return Promise.resolve(hit);
+    return fetchCandles(pair, tf).then(function (cs) {
+      store[key] = { cs: cs, at: Date.now() }; return store[key];
+    }).catch(function (e) {
+      var old = store[key];
+      store[key] = { cs: old && old.cs, at: old ? old.at : 0, error: e.message || 'Failed' };
+      return store[key];
+    });
+  }
+
+  function evaluate(pair) {
+    var info = A.TF[cfg.tf], hit = store[pair.sym + '|' + cfg.tf];
+    if (!hit || !hit.cs || hit.cs.length < 60) { evals[pair.sym] = { error: hit && hit.error || 'No data' }; return; }
+    var res = A.analyse(hit.cs), pl = A.plan(res, pair, +cfg.balance, +cfg.risk), htf = null;
+    if (info.htf && res.signal !== 'WAIT') {
+      var h = store[pair.sym + '|' + info.htf];
+      htf = h && h.cs && h.cs.length >= 60 ? A.analyse(h.cs) : 'pending';
+    }
+    evals[pair.sym] = {
+      res: res, plan: pl, error: hit.error, cs: hit.cs,
+      ready: A.readiness(res, pl, htf, {
+        minConf: +cfg.minConf || 65, htfLabel: info.htf ? tfLabel(info.htf) + ' trend' : '',
+        session: cfg.tf === '1h' && !demoMode(), now: new Date()
+      })
+    };
+  }
+
+  /* ---------- track record ---------- */
+  function openTrade(sym, tf, dir) {
+    return track.some(function (s) { return s.status === 'open' && s.sym === sym && s.tf === tf && s.dir === dir; });
+  }
+  function trackAdd(pair, ev) {
+    var cs = ev.cs, p = ev.plan, dir = p.dir;
+    if (openTrade(pair.sym, cfg.tf, dir)) return;
+    track.push({ id: pair.sym + '|' + cfg.tf + '|' + cs[cs.length - 1].t, sym: pair.sym, tf: cfg.tf, dir: dir, dec: pair.dec,
+      entry: p.entry, sl: p.sl, tp1: p.tp1, t: String(cs[cs.length - 1].t), at: Date.now(), status: 'open', r: 0, conf: ev.res.conf });
+    if (track.length > 200) track = track.slice(-200);
+    save('ms_track', track);
+  }
+  /* Follows each open signal on later candles. If target and stop are both touched inside one candle it counts as a loss. */
+  function trackResolve(pair, tf, cs) {
+    var changed = false;
+    track.forEach(function (s) {
+      if (s.status !== 'open' || s.sym !== pair.sym || s.tf !== tf) return;
+      var after = cs.filter(function (c) { return String(c.t) > s.t; });
+      for (var i = 0; i < after.length; i++) {
+        var c = after[i];
+        var hitSL = s.dir > 0 ? c.l <= s.sl : c.h >= s.sl;
+        var hitTP = s.dir > 0 ? c.h >= s.tp1 : c.l <= s.tp1;
+        if (hitSL) { s.status = 'loss'; s.r = -1; break; }
+        if (hitTP) { s.status = 'win'; s.r = 1.5; break; }
+      }
+      if (s.status === 'open' && after.length >= 48) { s.status = 'expired'; s.r = 0; }
+      if (s.status !== 'open') {
+        changed = true;
+        if (cfg.alerts && s.status !== 'expired') {
+          notify((s.status === 'win' ? 'Target hit: ' : 'Stopped out: ') + s.sym + ' (' + tfLabel(s.tf) + ')',
+            s.status === 'win' ? 'Your ' + (s.dir > 0 ? 'buy' : 'sell') + ' reached take profit 1, +1.5R.' : 'Your ' + (s.dir > 0 ? 'buy' : 'sell') + ' hit its stop, -1R.');
+        }
+      }
+    });
+    if (changed) save('ms_track', track);
+  }
+  function stats() {
+    var done = track.filter(function (s) { return s.status === 'win' || s.status === 'loss'; });
+    var wins = done.filter(function (s) { return s.status === 'win'; }).length;
+    var net = done.reduce(function (a, s) { return a + s.r; }, 0);
+    return { closed: done.length, wins: wins, rate: done.length ? Math.round(wins / done.length * 100) : 0, net: net,
+      open: track.filter(function (s) { return s.status === 'open'; }).length };
+  }
+
+  /* Price alerts are checked on every closed candle, using its high and low. */
+  function checkPriceAlerts(pair, cs) {
+    var list = draws[pair.sym], changed = false;
+    if (!list) return;
+    list.forEach(function (d) {
+      if (!d.alert || d.fired || d.tf !== cfg.tf) return;
+      var hit = cs.some(function (c) { return String(c.t) > d.t && (d.dir > 0 ? c.h >= d.price : c.l <= d.price); });
+      if (hit) {
+        d.fired = true; changed = true;
+        notify('Price alert: ' + pair.sym, 'Price reached ' + fmt(d.price, pair.dec) + ' on a ' + tfLabel(cfg.tf) + ' candle.');
+      }
+    });
+    if (changed) save('ms_draw', draws);
+  }
+
+  function alertIfReady(pair) {
+    var ev = evals[pair.sym];
+    if (!ev || !ev.res) return;
+    var key = pair.sym + '|' + cfg.tf, prev = readyState[key];
+    var now = { ready: ev.ready.ok, sig: ev.res.signal };
+    readyState[key] = now; save('ms_ready', readyState);
+    if (prev === undefined || demoMode() || !now.ready) return;
+    if (prev.ready && prev.sig === now.sig) return;
+    trackAdd(pair, ev);
+    if (!cfg.alerts) return;
+    var pg = lastPing[key];
+    if (pg && pg.sig === now.sig && Date.now() - pg.at < 4 * A.TF[cfg.tf].ms) return;   // no repeats while it flickers
+    lastPing[key] = { sig: now.sig, at: Date.now() }; save('ms_ping', lastPing);
+    var p = ev.plan, f = function (v) { return fmt(v, pair.dec); };
+    notify(now.sig + ' ' + pair.sym + ' is ready (' + tfLabel(cfg.tf) + ')',
+      'Entry ' + f(p.entry) + '  Stop ' + f(p.sl) + '  Target ' + f(p.tp1) + '  Size ' + p.lots.toFixed(2) + ' lots  Strength ' + ev.res.conf + '%');
+  }
+
+  function refresh(force) {
     if (busy) return Promise.resolve();
-    busy = true; statusText = 'Analysing...'; render();
-    var chain = Promise.resolve();
-    if (demoMode()) runs += 1;
-    A.PAIRS.forEach(function (pair, i) {
-      chain = chain.then(function () {
-        var get = demoMode() ? Promise.resolve(A.demoCandles(pair, cfg.tf, runs)) : fetchCandles(pair);
-        return get.then(function (cs) {
-          var res = A.analyse(cs);
-          rows[pair.sym] = { cs: cs, res: res };
-          if (!demoMode()) maybeAlert(pair, cs, res);
-        }).catch(function (e) {
-          rows[pair.sym] = { error: e.message || 'Failed' };
-        }).then(function () { return demoMode() ? null : sleep(800); });
-      });
+    if (!demoMode() && !A.marketOpen()) {
+      statusText = 'Market closed'; A.PAIRS.forEach(evaluate); render(); return Promise.resolve();
+    }
+    busy = true; statusText = 'Checking'; render();
+    if (demoMode() && force) runs += 1;
+    var tf = cfg.tf, htf = A.TF[tf].htf, chain = Promise.resolve();
+    A.PAIRS.forEach(function (pair) {
+      chain = chain.then(function () { return candles(pair, tf, force); }).then(function (hit) {
+        if (!hit.cs || hit.cs.length < 60) return;
+        if (!demoMode()) trackResolve(pair, tf, hit.cs);
+        checkPriceAlerts(pair, hit.cs);
+        var res = A.analyse(hit.cs);
+        if (htf && res.signal !== 'WAIT') return candles(pair, htf, force);   // only fetch the higher timeframe for real candidates
+      }).then(function () { evaluate(pair); alertIfReady(pair); render(); });
     });
     return chain.then(function () {
       busy = false;
-      var d = new Date();
-      statusText = 'Updated ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      var errs = A.PAIRS.filter(function (p) { return evals[p.sym] && evals[p.sym].error && !evals[p.sym].res; }).length;
+      statusText = errs ? errs + ' pair' + (errs > 1 ? 's' : '') + ' failed' : 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       render();
     });
   }
 
   function schedule() {
     if (timer) clearInterval(timer);
-    var mins = Math.max(1, +cfg.every || 15);
-    timer = setInterval(function () { if (!demoMode()) refresh(); }, mins * 60000);
+    timer = setInterval(function () { refresh(false); }, Math.max(1, +cfg.every || 5) * 60000);
   }
 
   /* ---------- chart ---------- */
-  function drawChart(canvas, pair, row) {
-    var cs = row.cs.slice(-60), res = row.res;
-    var n = cs.length, off = row.cs.length - n;
-    var plan = A.plan(res, pair, +cfg.balance, +cfg.risk);
-    var dpr = window.devicePixelRatio || 1;
-    var w = canvas.clientWidth, h = canvas.clientHeight;
+  function drawChart(canvas, pair, ev) {
+    var cs = ev.cs.slice(-60), res = ev.res, n = cs.length, off = ev.cs.length - n, plan = ev.plan;
+    var dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
     canvas.width = w * dpr; canvas.height = h * dpr;
-    var g = canvas.getContext('2d');
-    g.scale(dpr, dpr);
+    var g = canvas.getContext('2d'); g.scale(dpr, dpr);
     var hi = Math.max.apply(null, cs.map(function (c) { return c.h; }));
     var lo = Math.min.apply(null, cs.map(function (c) { return c.l; }));
     if (plan) [plan.sl, plan.tp1, plan.tp2].forEach(function (v) { hi = Math.max(hi, v); lo = Math.min(lo, v); });
@@ -318,195 +948,331 @@ button.row:active{background:var(--panel2)}
     var axisW = 64, pw = w - axisW;
     function Y(v) { return (hi - v) / (hi - lo) * h; }
     function X(i) { return (i + 0.5) / n * pw; }
-    g.lineWidth = 1; g.strokeStyle = '#1F3042'; g.fillStyle = MUTED; g.font = '10px monospace';
+    g.lineWidth = 1; g.strokeStyle = '#1E2850'; g.fillStyle = MUTED; g.font = '10px monospace';
     [0.2, 0.4, 0.6, 0.8].forEach(function (f) {
       var y = f * h; g.beginPath(); g.moveTo(0, y); g.lineTo(pw, y); g.stroke();
-      g.fillText(fmt(hi - f * (hi - lo), pair.dec), pw + 6, y + 3);
+      var near = plan && [plan.sl, plan.tp1, plan.tp2, plan.entry].some(function (v) { return Math.abs(Y(v) - y) < 12; });
+      if (!near) g.fillText(fmt(hi - f * (hi - lo), pair.dec), pw + 6, y + 3);
     });
     var bw = Math.max(2, pw / n * 0.6);
     cs.forEach(function (c, i) {
-      var col = c.c >= c.o ? BLUE : ORANGE;
+      var col = c.c >= c.o ? UP : DOWN;
       g.strokeStyle = col; g.fillStyle = col;
       g.beginPath(); g.moveTo(X(i), Y(c.h)); g.lineTo(X(i), Y(c.l)); g.stroke();
-      var top = Y(Math.max(c.o, c.c)), bh = Math.max(1.5, Math.abs(Y(c.o) - Y(c.c)));
-      g.fillRect(X(i) - bw / 2, top, bw, bh);
+      g.fillRect(X(i) - bw / 2, Y(Math.max(c.o, c.c)), bw, Math.max(1.5, Math.abs(Y(c.o) - Y(c.c))));
     });
     function line(arr, color, dash) {
-      g.strokeStyle = color; g.lineWidth = 1.5; g.setLineDash(dash || []);
-      g.beginPath();
+      g.strokeStyle = color; g.lineWidth = 1.5; g.setLineDash(dash || []); g.beginPath();
       for (var i = 0; i < n; i++) { var x = X(i), y = Y(arr[off + i]); if (i) g.lineTo(x, y); else g.moveTo(x, y); }
       g.stroke(); g.setLineDash([]);
     }
-    line(res.bbUp, '#6F8399', [4, 4]); line(res.bbLo, '#6F8399', [4, 4]);
-    line(res.e50, '#C58BFF'); line(res.e20, '#E8EEF4');
+    line(res.bbUp, '#6B79A8', [4, 4]); line(res.bbLo, '#6B79A8', [4, 4]);
+    line(res.e50, VIOLET); line(res.e20, '#EEF2FF');
     if (plan) {
-      [['TP2', plan.tp2, BLUE, [6, 4]], ['TP1', plan.tp1, BLUE, [6, 4]], ['Entry', plan.entry, '#E8EEF4', []], ['SL', plan.sl, ORANGE, [6, 4]]]
+      [['TP2', plan.tp2, CYAN, [6, 4]], ['TP1', plan.tp1, UP, [6, 4]], ['Entry', plan.entry, '#EEF2FF', []], ['Stop', plan.sl, DOWN, [6, 4]]]
         .forEach(function (L) {
           var y = Y(L[1]);
           g.strokeStyle = L[2]; g.lineWidth = 1.5; g.setLineDash(L[3]);
           g.beginPath(); g.moveTo(0, y); g.lineTo(pw, y); g.stroke(); g.setLineDash([]);
           g.fillStyle = L[2]; g.fillRect(pw + 2, y - 8, axisW - 2, 16);
-          g.fillStyle = '#0F1822'; g.font = '10px monospace';
-          g.fillText(L[0], pw + 6, y + 3);
+          g.fillStyle = INK; g.font = '10px monospace'; g.fillText(L[0], pw + 6, y + 3);
         });
     }
   }
 
   /* ---------- views ---------- */
-  function header(title, back) {
-    return '<header class="bar">' +
-      (back ? '<button class="icon" data-act="back" aria-label="Back">&larr;</button>' : '') +
-      '<h1>' + title + '</h1>' +
-      '<span class="spacer"></span>' +
-      '<button class="icon" data-act="settings" aria-label="Settings">Settings</button></header>';
+  var LOGO = '<svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + CYAN + '"/><stop offset="1" stop-color="' + VIOLET + '"/></linearGradient></defs>' +
+    '<circle cx="20" cy="20" r="16" fill="none" stroke="url(#lg)" stroke-width="3"/><ellipse cx="20" cy="20" rx="6.5" ry="16" fill="none" stroke="url(#lg)" stroke-width="2.2"/>' +
+    '<path d="M4 20h32" stroke="url(#lg)" stroke-width="2.2"/><circle cx="26.5" cy="12" r="3.2" fill="' + PINK + '"/></svg>';
+
+  function pill(sig, filled) {
+    var c = sigColor(sig);
+    return '<span class="pill" style="color:' + (filled ? INK : c) + ';border-color:' + c + ';background:' + (filled ? sigGrad(sig) : 'transparent') + '">' + sig + '</span>';
+  }
+  function ring(pct, color, size) {
+    return '<span class="ring' + (size === 'lg' ? ' lg' : '') + '" style="--p:' + Math.min(100, pct) + ';--c:' + color + '"><b>' + pct + '</b></span>';
+  }
+  function tile(label, value, color, sub) {
+    return '<div class="tile"><span class="tl">' + label + '</span><span class="tv" style="color:' + color + '">' + value + '</span>' +
+      (sub ? '<span class="ts">' + sub + '</span>' : '') + '</div>';
+  }
+
+  function brandBar() {
+    var open = demoMode() || A.marketOpen();
+    return '<header class="bar"><div class="brand">' + LOGO + '<div class="bt"><b>Meridian</b><span>SIGNAL</span></div></div><span class="spacer"></span>' +
+      (demoMode() ? '<span class="chip demo">Demo data</span>' : '<span class="chip ' + (open ? 'live' : 'closed') + '"><i></i>' + (open ? 'Market open' : 'Market closed') + '</span>') + '</header>';
+  }
+  function backBar(title) {
+    return '<header class="bar"><button class="icon" data-act="back" aria-label="Back">&larr;</button><h1>' + title + '</h1></header>';
+  }
+  function nav() {
+    var items = [['list', 'Signals', '<path d="M4 18V9M10 18V5M16 18v-7M22 18V3" />'],
+      ['chart', 'Chart', '<path d="M7 3v4M7 17v4M17 6v3M17 15v5" /><rect x="4.5" y="7" width="5" height="10" rx="1"/><rect x="14.5" y="9" width="5" height="6" rx="1"/>'],
+      ['record', 'Record', '<path d="M4 4v16h16M8 15l4-4 3 3 5-6" />'],
+      ['settings', 'Settings', '<circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" />']];
+    return '<nav class="nav">' + items.map(function (it) {
+      return '<button data-nav="' + it[0] + '" class="' + (screen === it[0] ? 'on' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + it[2] + '</svg><span>' + it[1] + '</span></button>';
+    }).join('') + '</nav>';
+  }
+
+  function row(pair, i) {
+    var ev = evals[pair.sym];
+    if (!ev) return '<div class="row"><b>' + pair.sym + '</b><span class="muted">Waiting</span></div>';
+    if (!ev.res) return '<div class="row"><b>' + pair.sym + '</b><span class="muted err">' + esc(ev.error) + '</span></div>';
+    var rd = ev.ready, c = sigColor(ev.res.signal);
+    var sub = ev.res.signal === 'WAIT' ? 'No clear direction' : rd.ok ? 'Ready to trade' : rd.waiting;
+    var style = rd.ok ? ' style="border-color:' + c + ';box-shadow:0 10px 30px -14px ' + c + ',inset 0 0 0 1px ' + c + '55"' : '';
+    return '<button class="row' + (rd.ok ? ' ready' : '') + '" data-pair="' + i + '"' + style + '>' +
+      ring(ev.res.conf, c, '') +
+      '<span class="grow"><b>' + pair.sym + '</b> <span class="mono muted">' + fmt(ev.res.last, pair.dec) + '</span><br>' +
+      '<span class="small" style="color:' + (rd.ok ? c : MUTED) + ';font-weight:' + (rd.ok ? 700 : 400) + '">' + esc(sub) + '</span></span>' +
+      pill(ev.res.signal, rd.ok) + '</button>';
   }
 
   function viewList() {
-    var buy = 0, sell = 0, wait = 0;
-    A.PAIRS.forEach(function (p) {
-      var r = rows[p.sym];
-      if (r && r.res) { if (r.res.signal === 'BUY') buy++; else if (r.res.signal === 'SELL') sell++; else wait++; }
-    });
-    var h = header('Signal Desk', false);
-    h += '<div class="sub">' + (demoMode() ? '<span class="chip">Demo data</span> ' : '') +
-      '<span class="muted">' + buy + ' buy &middot; ' + sell + ' sell &middot; ' + wait + ' wait</span>' +
-      '<span class="spacer"></span><span class="muted">' + statusText + '</span></div>';
-    h += '<div class="tabs">';
-    TFS.forEach(function (t) {
-      h += '<button class="tab' + (cfg.tf === t[0] ? ' on' : '') + '" data-tf="' + t[0] + '">' + t[1] + '</button>';
-    });
-    h += '<span class="spacer"></span><button class="run" data-act="run"' + (busy ? ' disabled' : '') + '>' +
-      (busy ? 'Running' : 'Run analysis') + '</button></div>';
-    h += '<div class="list">';
+    var groups = { ready: [], watch: [], none: [] };
     A.PAIRS.forEach(function (p, i) {
-      var r = rows[p.sym];
-      if (!r) { h += '<div class="row"><b>' + p.sym + '</b><span class="muted">Waiting...</span></div>'; return; }
-      if (r.error) { h += '<div class="row"><b>' + p.sym + '</b><span class="muted err">' + r.error + '</span></div>'; return; }
-      h += '<button class="row" data-pair="' + i + '"><span><b>' + p.sym + '</b><br><span class="mono muted">' +
-        fmt(r.res.last, p.dec) + '</span></span><span class="right"><span class="mono muted">' + r.res.conf + '%</span>' +
-        pill(r.res.signal) + '</span></button>';
+      var ev = evals[p.sym], k = !ev || !ev.res ? 'none' : ev.ready.ok ? 'ready' : ev.res.signal === 'WAIT' ? 'none' : 'watch';
+      groups[k].push([p, i, ev && ev.res ? ev.res.conf : 0]);
     });
-    h += '</div><p class="foot">Confidence shows how strongly the four indicators agree. ' +
-      (demoMode() ? 'Add a Twelve Data key in Settings for live prices. ' : '') +
-      'Not financial advice.</p>';
-    return h;
+    Object.keys(groups).forEach(function (k) { groups[k].sort(function (a, b) { return b[2] - a[2]; }); });
+    var open = demoMode() || A.marketOpen(), st = stats();
+    var h = brandBar();
+    h += '<div class="tiles">' + tile('Ready', groups.ready.length, UP, 'to trade now') + tile('Watching', groups.watch.length, AMBER, 'not yet') +
+      tile('Win rate', st.closed ? st.rate + '%' : '-', CYAN, st.closed ? st.closed + ' closed' : 'no results yet') + '</div>';
+    h += '<div class="tabs">';
+    TFS.forEach(function (t) { h += '<button class="tab' + (cfg.tf === t[0] ? ' on' : '') + '" data-tf="' + t[0] + '">' + t[1] + '</button>'; });
+    h += '<span class="spacer"></span><span class="muted small">' + statusText + '</span><button class="run" data-act="run"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Checking' : 'Check now') + '</button></div>';
+    if (!demoMode() && !open) h += '<div class="note">Forex is closed until Sunday evening (UTC). Showing the last prices from Friday.</div>';
+    if (cfg.alerts && perm !== 'granted' && perm !== 'unknown') {
+      h += '<div class="note warn"><b>Alerts are off.</b> Turn on notifications to get a ping the moment a trade is ready.<br><button class="ghost slim" data-act="perm-list">Turn on alerts</button></div>';
+    }
+    var sec = function (title, color, arr, empty) {
+      if (!arr.length && !empty) return '';
+      return '<div class="label sec"><i style="background:' + color + '"></i>' + title + ' <span>' + arr.length + '</span></div>' +
+        (arr.length ? arr.map(function (x) { return row(x[0], x[1]); }).join('') : '<div class="empty">' + empty + '</div>');
+    };
+    h += '<div class="list">' + sec('Ready to trade', UP, groups.ready, 'Nothing is ready yet. You will get a notification the moment something is.') +
+      sec('Watching', AMBER, groups.watch) + sec('No trade', MUTED, groups.none) + '</div>';
+    h += '<p class="foot">' + (demoMode() ? 'These are sample prices, not the real market. Add a Twelve Data key in Settings for live signals. ' : '') +
+      'A pair is ready only when every check passes: signal strength, trend and momentum agree, trend strength, higher timeframe, not overextended, a stop wider than the spread' + (cfg.tf === '1h' && !demoMode() ? ' and London or New York hours' : '') + '. No signal is guaranteed. Not financial advice.</p>';
+    return h + nav();
   }
 
-  function reading(m) {
-    var c = m > 0.15 ? BLUE : m < -0.15 ? ORANGE : MUTED;
-    return c;
-  }
   function indRow(name, value, text, m, mark) {
-    var c = reading(m);
-    var meter = mark ? '<div class="meter"><i class="tick"></i><i class="dot" style="left:' +
-      ((Math.max(-1, Math.min(1, m)) + 1) / 2 * 100) + '%;background:' + c + '"></i></div>' : '';
-    return '<div class="ind"><div class="between"><b>' + name + '</b><span style="color:' + c + ';font-weight:600">' + text +
-      '</span></div><div class="mono muted">' + value + '</div>' + meter + '</div>';
+    var c = m > 0.15 ? UP : m < -0.15 ? DOWN : MUTED;
+    var meter = mark ? '<div class="meter"><i class="tick"></i><i class="dot" style="left:' + ((Math.max(-1, Math.min(1, m)) + 1) / 2 * 100) + '%;background:' + c + '"></i></div>' : '';
+    return '<div class="ind"><div class="between"><b>' + name + '</b><span style="color:' + c + ';font-weight:600">' + text + '</span></div><div class="mono muted">' + value + '</div>' + meter + '</div>';
+  }
+  function planRow(label, value, sub, color) {
+    return '<div class="prow"><span><i class="sw" style="background:' + color + '"></i>' + label + '</span><span class="right col"><span class="mono">' + value + '</span><span class="muted small">' + sub + '</span></span></div>';
   }
 
   function viewDetail() {
-    var p = A.PAIRS[selected], r = rows[p.sym];
-    if (!r || !r.res) return header(p.sym, true) + '<p class="foot">No data yet.</p>';
-    var res = r.res, plan = A.plan(res, p, +cfg.balance, +cfg.risk);
-    var f = function (v) { return fmt(v, p.dec); };
-    var h = header(p.sym, true);
-    h += '<div class="card"><div class="between"><div><span class="big mono">' + f(res.last) + '</span><br><span class="muted">' +
-      (TFS.filter(function (t) { return t[0] === cfg.tf; })[0] || ['', ''])[1] + ' candles</span></div>' +
-      '<div class="right"><div class="mono">' + res.conf + '%</div>' + pill(res.signal) + '</div></div>' +
-      '<p class="muted">EMA 20 is ' + (res.trend > 0 ? 'above' : 'below') + ' EMA 50, the MACD histogram is ' +
-      (res.hist > 0 ? 'positive' : 'negative') + ' and RSI is ' + res.rsi.toFixed(0) + '.</p></div>';
-    h += '<div class="card"><div class="legend"><span><i style="background:#E8EEF4"></i>EMA 20</span><span><i style="background:#C58BFF"></i>EMA 50</span><span><i style="background:#6F8399"></i>Bollinger</span></div><canvas id="chart"></canvas></div>';
+    var p = A.PAIRS[selected], ev = evals[p.sym];
+    if (!ev || !ev.res) return backBar(p.sym) + '<p class="foot">No data yet.</p>';
+    var res = ev.res, plan = ev.plan, rd = ev.ready, f = function (v) { return fmt(v, p.dec); };
+    var c = sigColor(res.signal);
+    var h = backBar(p.sym);
+    h += '<div class="card hero" style="' + (rd.ok ? 'border-color:' + c + ';box-shadow:0 14px 40px -18px ' + c : '') + '">' +
+      '<div class="between mid">' + ring(res.conf, c, 'lg') +
+      '<div class="grow"><span class="big mono">' + f(res.last) + '</span><br><span class="muted">' + tfLabel(cfg.tf) + ' candles &middot; strength ' + res.conf + '%</span></div>' +
+      pill(res.signal, rd.ok) + '</div>' +
+      '<div class="banner' + (rd.ok ? ' go' : '') + '" style="' + (rd.ok ? 'background:' + sigGrad(res.signal) + ';color:' + INK : '') + '">' +
+      (res.signal === 'WAIT' ? 'No clear direction. Nothing to trade here.' : rd.ok ? 'Ready to trade: all ' + rd.total + ' checks pass.' : rd.passed + ' of ' + rd.total + ' checks pass. ' + esc(rd.waiting) + '.') + '</div></div>';
+    h += '<button class="primary wide" data-act="open-chart">Open interactive chart</button>';
+    if (rd.checks.length) {
+      h += '<div class="card"><div class="label">Trade-ready checks</div>' + rd.checks.map(function (k) {
+        return '<div class="chk"><span class="mark ' + (k.pass ? 'ok' : 'no') + '">' + (k.pass ? 'Pass' : 'Fail') + '</span>' +
+          '<span class="grow"><b>' + esc(k.label) + '</b><br><span class="muted small">Needs ' + esc(k.need) + '</span></span><span class="mono val">' + esc(k.value) + '</span></div>';
+      }).join('') + '</div>';
+    }
+    if (plan) {
+      h += '<div class="card"><div class="label">Trade plan</div><div class="head2">' + (plan.dir > 0 ? 'Buy ' : 'Sell ') + p.sym + ' at market</div>' +
+        planRow('Entry', f(plan.entry), 'Last close', '#EEF2FF') +
+        planRow('Stop loss', f(plan.sl), plan.slPips.toFixed(1) + ' pips (1.5 x ATR)', DOWN) +
+        planRow('Take profit 1', f(plan.tp1), plan.tp1Pips.toFixed(1) + ' pips (1.5 times your risk)', UP) +
+        planRow('Take profit 2', f(plan.tp2), plan.tp2Pips.toFixed(1) + ' pips (2.5 times your risk)', CYAN) +
+        '<div class="size"><div><span class="mono huge">' + (plan.ok ? plan.lots.toFixed(2) : '-') + '</span> <span class="muted">lots</span></div>' +
+        '<div class="muted small">' + (plan.ok ? 'Risking about $' + money(plan.riskUsd) + ' (' + cfg.risk + '% of $' + money(cfg.balance) + ')' : 'Set balance and risk in Settings') + '</div></div>' +
+        '<p class="foot">Assumes about $' + p.pv.toFixed(2) + ' per pip per lot. Check your broker’s contract size before sizing a real trade.</p></div>';
+    }
+    h += '<div class="card"><div class="legend"><span><i style="background:#EEF2FF"></i>EMA 20</span><span><i style="background:' + VIOLET + '"></i>EMA 50</span><span><i style="background:#6B79A8"></i>Bollinger</span></div><canvas id="chart" role="img" aria-label="Candlestick chart with trade levels"></canvas></div>';
     var rsiText = res.rs > 0.3 ? (res.rsi < 30 ? 'Oversold' : 'Bullish') : res.rs < -0.3 ? (res.rsi > 70 ? 'Overbought' : 'Bearish') : 'Neutral';
     h += '<div class="card"><div class="label">Indicator readings</div>' +
       indRow('EMA 20 / EMA 50', f(res.e20[res.e20.length - 1]) + ' / ' + f(res.e50[res.e50.length - 1]), res.trend > 0 ? 'Bullish' : 'Bearish', res.trend, true) +
       indRow('MACD (12, 26, 9)', 'Histogram ' + (res.hist > 0 ? '+' : '') + (res.hist / p.pip).toFixed(1) + ' pips', res.mom > 0 ? 'Bullish' : 'Bearish', res.mom, true) +
       indRow('RSI (14)', res.rsi.toFixed(1), rsiText, res.rs, true) +
       indRow('Bollinger Bands (20, 2)', '%B ' + (res.pb * 100).toFixed(0) + '%', res.pb < 0.1 ? 'Near lower band' : res.pb > 0.9 ? 'Near upper band' : 'Mid range', res.bs * 2, true) +
+      indRow('ADX (14)', res.adx.toFixed(1), res.adx >= 20 ? 'Trending' : 'Sideways', 0, false) +
       indRow('ATR (14)', (res.atr / p.pip).toFixed(1) + ' pips per candle', 'Sets stop distance', 0, false) +
       '<div class="between small muted"><span>Bearish</span><span>Bullish</span></div></div>';
-    if (plan) {
-      h += '<div class="card"><div class="label">Trade plan</div><div class="head2">' + (plan.dir > 0 ? 'Buy ' : 'Sell ') + p.sym + ' at market</div>' +
-        planRow('Entry', f(plan.entry), 'Last close', '#E8EEF4') +
-        planRow('Stop loss', f(plan.sl), plan.slPips.toFixed(1) + ' pips (1.5 x ATR)', ORANGE) +
-        planRow('Take profit 1', f(plan.tp1), plan.tp1Pips.toFixed(1) + ' pips (2 x ATR)', BLUE) +
-        planRow('Take profit 2', f(plan.tp2), plan.tp2Pips.toFixed(1) + ' pips (3.5 x ATR)', BLUE) +
-        planRow('Reward to risk', '1 : ' + plan.rr.toFixed(2), 'To take profit 1', '#6F8399') +
-        '<div class="size"><div><span class="mono huge">' + (plan.ok ? plan.lots.toFixed(2) : '-') + '</span> <span class="muted">lots</span></div>' +
-        '<div class="muted small">' + (plan.ok ? 'Risking about $' + money(plan.riskUsd) + ' on ' + plan.slPips.toFixed(1) + ' pips' : 'Set balance and risk in Settings') + '</div></div>' +
-        '<p class="foot">Assumes about $' + p.pv.toFixed(2) + ' per pip per lot. Check your broker’s contract size before sizing a real trade.</p></div>';
-    } else {
-      h += '<div class="card"><div class="label">Trade plan</div><div class="head2">No trade right now</div>' +
-        '<p class="muted">Trend and momentum disagree on ' + p.sym + ' at this timeframe. Wait for EMA 20 and the MACD histogram to point the same way, or switch timeframe.</p></div>';
-    }
     return h;
   }
 
-  function planRow(label, value, sub, color) {
-    return '<div class="prow"><span><i class="sw" style="background:' + color + '"></i>' + label + '</span><span class="right"><span class="mono">' +
-      value + '</span><span class="muted small">' + sub + '</span></span></div>';
+  function viewRecord() {
+    var st = stats(), h = '<header class="bar"><h1>Track record</h1></header>';
+    h += '<div class="tiles four">' + tile('Win rate', st.closed ? st.rate + '%' : '-', CYAN, st.wins + ' of ' + st.closed) +
+      tile('Net result', (st.net > 0 ? '+' : '') + st.net.toFixed(1) + 'R', st.net >= 0 ? UP : DOWN, 'target 1 vs stop') +
+      tile('Closed', st.closed, '#EEF2FF', 'finished') + tile('Open', st.open, AMBER, 'still running') + '</div>';
+    h += '<div class="note">Every signal that reaches Ready is logged here and followed on later candles until it touches take profit 1 (+1.5R) or its stop (-1R). If both are touched inside one candle it counts as a loss. ' +
+      (st.closed < 30 ? 'The win rate means little until about 30 signals have closed. ' : '') + 'Demo data is never logged.</div>';
+    var rows = track.slice().reverse().slice(0, 40);
+    h += '<div class="list">' + (rows.length ? rows.map(function (s) {
+      var col = s.status === 'win' ? UP : s.status === 'loss' ? DOWN : s.status === 'open' ? AMBER : MUTED;
+      var txt = s.status === 'win' ? 'WIN +1.5R' : s.status === 'loss' ? 'LOSS -1R' : s.status === 'open' ? 'OPEN' : 'EXPIRED';
+      var f = function (v) { return fmt(v, s.dec); };
+      return '<div class="row static"><span class="grow"><b>' + s.sym + '</b> <span class="muted">' + tfLabel(s.tf) + ' ' + (s.dir > 0 ? 'buy' : 'sell') + '</span><br>' +
+        '<span class="mono muted small">Entry ' + f(s.entry) + ' &middot; Stop ' + f(s.sl) + ' &middot; Target ' + f(s.tp1) + '</span></span>' +
+        '<span class="pill" style="color:' + col + ';border-color:' + col + '">' + txt + '</span></div>';
+    }).join('') : '<div class="empty">No signals logged yet. The first one appears the moment a pair becomes ready with live prices.</div>') + '</div>';
+    if (track.length) h += '<button class="ghost danger" data-act="clear">' + (clearArmed ? 'Tap again to clear the record' : 'Clear record') + '</button>';
+    return h + nav();
   }
 
   function viewSettings() {
-    return header('Settings', true).replace('<button class="icon" data-act="settings" aria-label="Settings">Settings</button>', '') +
-      '<div class="card form">' +
-      '<label for="f-key">Twelve Data API key</label><input id="f-key" type="password" autocomplete="off" value="' + cfg.key + '" placeholder="Leave empty for demo data">' +
-      '<label for="f-bal">Account balance (USD)</label><input id="f-bal" type="number" inputmode="decimal" value="' + cfg.balance + '">' +
-      '<label for="f-risk">Risk per trade (%)</label><input id="f-risk" type="number" inputmode="decimal" step="0.25" value="' + cfg.risk + '">' +
-      '<label for="f-every">Check for signals every (minutes)</label><input id="f-every" type="number" inputmode="numeric" min="1" value="' + cfg.every + '">' +
+    return '<header class="bar"><h1>Settings</h1></header><div class="card form">' +
+      '<label for="f-key">Twelve Data API key</label><input id="f-key" type="password" autocomplete="off" value="' + esc(cfg.key) + '" placeholder="Leave empty for demo data">' +
+      '<label for="f-bal">Account balance (USD)</label><input id="f-bal" type="number" inputmode="decimal" value="' + esc(cfg.balance) + '">' +
+      '<label for="f-risk">Risk per trade (%)</label><input id="f-risk" type="number" inputmode="decimal" step="0.25" value="' + esc(cfg.risk) + '">' +
+      '<label for="f-conf">Minimum signal strength to be ready (%)</label><input id="f-conf" type="number" inputmode="numeric" min="40" max="100" value="' + esc(cfg.minConf) + '">' +
+      '<label for="f-every">Look for new candles every (minutes)</label><input id="f-every" type="number" inputmode="numeric" min="1" value="' + esc(cfg.every) + '">' +
+      '<label class="tog"><input id="f-alerts" type="checkbox"' + (cfg.alerts ? ' checked' : '') + '> <span>Notify me when a trade is ready</span></label>' +
       '<button class="primary" data-act="save">Save</button>' +
       '<button class="ghost" data-act="perm">Turn on notifications</button>' +
       '<button class="ghost" data-act="test">Send a test notification</button>' +
-      '<p class="foot" id="f-msg"></p>' +
-      '<p class="foot">Alerts arrive while the app is open or running in the background. Android can pause background apps, so for alerts that never miss, also run the Telegram alert script included in this project.</p></div>';
+      '<p class="foot" id="f-msg" role="status"></p>' +
+      '<p class="foot">The app only downloads prices when a new candle has closed, so a free key is plenty. Raising the minimum strength gives fewer, more selective signals. Alerts arrive while the app is open or was used recently. Phones pause apps that stay closed, so for alerts that never miss, also run the Telegram alert script.</p></div>' + nav();
   }
 
   function render() {
-    var scrollY = window.scrollY;
-    $app.innerHTML = screen === 'list' ? viewList() : screen === 'detail' ? viewDetail() : viewSettings();
+    var y = window.scrollY;
+    if (screen === 'chart') { renderChart(); return; }
+    $app.classList.remove('chartmode'); chartInst = null; chartKey = null;
+    $app.innerHTML = screen === 'list' ? viewList() : screen === 'detail' ? viewDetail() : screen === 'record' ? viewRecord() : viewSettings();
     if (screen === 'detail') {
-      var p = A.PAIRS[selected], r = rows[p.sym], c = document.getElementById('chart');
-      if (c && r && r.res) drawChart(c, p, r);
+      var p = A.PAIRS[selected], ev = evals[p.sym], c = document.getElementById('chart');
+      if (c && ev && ev.res) drawChart(c, p, ev);
     }
-    window.scrollTo(0, scrollY);
+    window.scrollTo(0, y);
+  }
+
+  /* ---------- chart screen ---------- */
+  function serFor(pair, cs) {
+    var k = pair.sym + '|' + cfg.tf + '|' + cs.length + '|' + cs[cs.length - 1].t;
+    if (!serCache[k]) { serCache = {}; serCache[k] = A.series(cs); }
+    return serCache[k];
+  }
+  function btFor(pair, cs) {
+    var k = pair.sym + '|' + cfg.tf + '|' + cs.length + '|' + cs[cs.length - 1].t + '|' + cfg.minConf;
+    if (!btCache[k]) { btCache = {}; btCache[k] = A.backtest(cs, pair, { minConf: +cfg.minConf || 65 }); }
+    return btCache[k];
+  }
+  function chartTop() {
+    var ev = evals[A.PAIRS[selected].sym];
+    var h = '<div class="hs">' + A.PAIRS.map(function (p, i) {
+      return '<button class="cc' + (i === selected ? ' on' : '') + '" data-csym="' + i + '">' + p.sym + '</button>';
+    }).join('') + '</div><div class="hs"><span class="tfs">' + TFS.map(function (t) {
+      return '<button class="cc' + (cfg.tf === t[0] ? ' on' : '') + '" data-tf="' + t[0] + '">' + t[1] + '</button>';
+    }).join('') + '</span>' +
+      (ev && ev.res ? '<span class="grow"></span>' + pill(ev.res.signal, ev.ready.ok) + '<span class="small muted cst">' + (ev.res.signal === 'WAIT' ? 'No clear direction' : ev.ready.ok ? 'Ready to trade' : esc(ev.ready.waiting)) + '</span>' : '') + '</div>';
+    h += '<div class="hs">' + [['ema', 'EMA'], ['bb', 'Bands'], ['rsi', 'RSI'], ['macd', 'MACD'], ['sig', 'Signals'], ['lvl', 'Levels']].map(function (x) {
+      return '<button class="tg' + (chartFlags[x[0]] ? ' on' : '') + '" data-ind="' + x[0] + '" aria-pressed="' + !!chartFlags[x[0]] + '">' + x[1] + '</button>';
+    }).join('') + '<i class="sepv"></i>' + [['h', 'Line'], ['t', 'Trend'], ['alert', 'Alert']].map(function (x) {
+      return '<button class="tg tool' + (chartInst && chartInst.tool === x[0] ? ' on' : '') + '" data-tool="' + x[0] + '">' + x[1] + '</button>';
+    }).join('') + '<button class="tg" data-act="ch-undo">Undo</button><button class="tg" data-act="ch-clear">Clear</button><button class="tg" data-act="ch-fit">Fit</button></div>';
+    return h;
+  }
+  function chartStat(pair, hit) {
+    if (!hit || !hit.cs || hit.cs.length < 61) return '<div class="stat muted small">Waiting for enough candles to run the history check.</div>';
+    var bt = btFor(pair, hit.cs);
+    var txt = bt.closed ? bt.closed + ' past signals: <b style="color:' + (bt.rate >= 40 ? UP : AMBER) + '">' + bt.rate + '%</b> reached target, net <b style="color:' + (bt.net >= 0 ? UP : DOWN) + '">' + (bt.net > 0 ? '+' : '') + bt.net.toFixed(1) + 'R</b>'
+      : 'No past signals in these ' + hit.cs.length + ' candles';
+    return '<div class="stat"><div><b>History check</b> &middot; ' + txt + '</div>' +
+      '<div class="muted small">Replays the app\u2019s rules on the candles shown, so it is not a promise. A 1.5R target needs about 40% to break even. Live signals are stricter.</div></div>';
+  }
+  function renderChart() {
+    $app.classList.add('chartmode');
+    var pair = A.PAIRS[selected], hit = store[pair.sym + '|' + cfg.tf], ev = evals[pair.sym];
+    if (!document.getElementById('cv')) {
+      $app.innerHTML = '<div class="ch"><div id="c-top"></div><div class="cvbox"><canvas id="cv"></canvas></div><div id="c-stat"></div></div>' + nav();
+      chartInst = new MChart(document.getElementById('cv'), {
+        colors: CH, timeLabel: timeLabel,
+        onDraws: function (list) { draws[A.PAIRS[selected].sym] = list; save('ms_draw', draws); },
+        onTool: function () { document.getElementById('c-top').innerHTML = chartTop(); }
+      });
+      chartKey = null;
+    }
+    chartInst.flags = chartFlags;
+    chartInst.draws = draws[pair.sym] || (draws[pair.sym] = []);
+    document.getElementById('c-top').innerHTML = chartTop();
+    document.getElementById('c-stat').innerHTML = chartStat(pair, hit);
+    if (hit && hit.cs && hit.cs.length >= 2) {
+      var key = pair.sym + '|' + cfg.tf, keep = chartKey === key;
+      chartKey = key;
+      var f = ev && ev.plan, lv = [];
+      if (f) lv = [{ label: 'TP2', price: f.tp2, color: CYAN, dash: [6, 4] }, { label: 'TP1', price: f.tp1, color: UP, dash: [6, 4] },
+        { label: 'Entry', price: f.entry, color: '#EEF2FF' }, { label: 'Stop', price: f.sl, color: DOWN, dash: [6, 4] }];
+      chartInst.levels = lv;
+      chartInst.markers = hit.cs.length >= 61 ? btFor(pair, hit.cs).trades.map(function (t) { return { i: t.i, dir: t.dir, out: t.out }; }) : [];
+      chartInst.setData(hit.cs, serFor(pair, hit.cs), pair.dec, cfg.tf, keep);
+    } else { chartInst.cs = null; chartInst.draw(); }
   }
 
   /* ---------- events ---------- */
   $app.addEventListener('click', function (e) {
     var t = e.target.closest('button');
     if (!t) return;
+    if (t.dataset.csym != null) { selected = +t.dataset.csym; chartKey = null; return render(); }
+    if (t.dataset.ind) { chartFlags[t.dataset.ind] = !chartFlags[t.dataset.ind]; save('ms_chart', chartFlags); return render(); }
+    if (t.dataset.tool && chartInst) {
+      chartInst.tool = chartInst.tool === t.dataset.tool ? null : t.dataset.tool; chartInst.pending = null;
+      document.getElementById('c-top').innerHTML = chartTop(); return chartInst.draw();
+    }
+    if (t.dataset.nav) { screen = t.dataset.nav; clearArmed = false; window.scrollTo(0, 0); return render(); }
     if (t.dataset.pair != null) { selected = +t.dataset.pair; screen = 'detail'; window.scrollTo(0, 0); return render(); }
-    if (t.dataset.tf) { cfg.tf = t.dataset.tf; save('cfg', cfg); rows = {}; render(); return refresh(); }
+    if (t.dataset.tf) { cfg.tf = t.dataset.tf; save('ms_cfg', cfg); A.PAIRS.forEach(evaluate); render(); return refresh(false); }
     var act = t.dataset.act;
     if (act === 'back') { screen = 'list'; return render(); }
-    if (act === 'settings') { screen = 'settings'; window.scrollTo(0, 0); return render(); }
-    if (act === 'run') return refresh();
+    if (act === 'open-chart') { screen = 'chart'; chartKey = null; window.scrollTo(0, 0); return render(); }
+    if (act === 'ch-undo' && chartInst) { chartInst.draws.pop(); save('ms_draw', draws); return chartInst.draw(); }
+    if (act === 'ch-clear' && chartInst) { chartInst.draws.length = 0; save('ms_draw', draws); return chartInst.draw(); }
+    if (act === 'ch-fit' && chartInst) { chartInst.reset(); return chartInst.draw(); }
+    if (act === 'run') return refresh(true);
+    if (act === 'perm-list') return askPermission().then(render);
+    if (act === 'clear') {
+      if (!clearArmed) { clearArmed = true; return render(); }
+      track = []; save('ms_track', track); clearArmed = false; return render();
+    }
     if (act === 'save') {
+      var oldKey = cfg.key;
       cfg.key = document.getElementById('f-key').value.trim();
       cfg.balance = +document.getElementById('f-bal').value || 0;
       cfg.risk = +document.getElementById('f-risk').value || 0;
-      cfg.every = Math.max(1, +document.getElementById('f-every').value || 15);
-      save('cfg', cfg); schedule(); rows = {};
-      screen = 'list'; render(); return refresh();
+      cfg.minConf = Math.min(100, Math.max(40, +document.getElementById('f-conf').value || 65));
+      cfg.every = Math.max(1, +document.getElementById('f-every').value || 5);
+      cfg.alerts = document.getElementById('f-alerts').checked;
+      save('ms_cfg', cfg); schedule();
+      if (cfg.key !== oldKey) { store = {}; evals = {}; readyState = {}; save('ms_ready', readyState); }
+      else A.PAIRS.forEach(evaluate);
+      screen = 'list'; render(); return refresh(false);
     }
     var msg = document.getElementById('f-msg');
-    if (act === 'perm') {
-      return askPermission().then(function (ok) { msg.textContent = ok ? 'Notifications are on.' : 'Notifications are blocked. Allow them in your phone settings.'; });
-    }
+    if (act === 'perm') return askPermission().then(function (ok) { msg.textContent = ok ? 'Notifications are on.' : 'Notifications are blocked. Allow them in your phone settings.'; });
     if (act === 'test') {
       return askPermission().then(function (ok) {
         if (!ok) { msg.textContent = 'Notifications are blocked. Allow them in your phone settings.'; return; }
-        return notify('Signal Desk', 'Test alert: notifications work.').then(function () { msg.textContent = 'Sent.'; });
+        return notify('Meridian Signal', 'Test alert: you will get a message like this the moment a trade is ready.').then(function () { msg.textContent = 'Sent.'; });
       });
     }
   });
 
-  document.addEventListener('visibilitychange', function () {
-    if (!document.hidden && !demoMode()) refresh();
-  });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) refresh(false); });
 
   schedule();
+  checkPermission().then(render);
   render();
-  refresh();
+  refresh(false);
 })();
 
 </script>

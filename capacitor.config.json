@@ -1,8 +1,8 @@
 {
-  "appId": "com.signaldesk.app",
-  "appName": "Signal Desk",
+  "appId": "com.meridian.signal",
+  "appName": "Meridian Signal",
   "webDir": "www",
-  "backgroundColor": "#0F1822",
+  "backgroundColor": "#0B1020",
   "plugins": {
     "CapacitorHttp": { "enabled": true }
   }
