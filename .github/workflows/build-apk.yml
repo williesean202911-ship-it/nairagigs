@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  apk:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,28 +18,25 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
-      - name: Collect the app files into www
-        run: |
-          mkdir www
-          cp index.html manifest.webmanifest sw.js icon-192.png icon-512.png www/
-
-      - name: Install dependencies
+      - name: Install packages
         run: npm install
 
-      - name: Create Android project
+      - name: Create the Android project
         run: npx cap add android
 
       - name: Copy the app into Android
         run: npx cap sync android
 
-      - name: Build debug APK
+      - name: Build the APK
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload the APK
         uses: actions/upload-artifact@v4
         with:
-          name: meridian-signal-apk
+          name: icebreaker-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
