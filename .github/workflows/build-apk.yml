@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  apk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,25 +18,38 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
 
-      - name: Install packages
+      - name: Collect the app files into www
+        run: |
+          mkdir www
+          cp index.html manifest.webmanifest sw.js icon-192.png icon-512.png www/
+
+      - name: Install dependencies
         run: npm install
 
-      - name: Create the Android project
+      - name: Create Android project
         run: npx cap add android
+
+      - name: Use the Meridian icon
+        run: |
+          R=android/app/src/main/res
+          rm -rf $R/mipmap-anydpi-v26
+          for d in $R/mipmap-*; do
+            cp icon-512.png $d/ic_launcher.png
+            cp icon-512.png $d/ic_launcher_round.png
+            cp icon-512.png $d/ic_launcher_foreground.png
+          done
 
       - name: Copy the app into Android
         run: npx cap sync android
 
-      - name: Build the APK
+      - name: Build debug APK
         working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
+        run: ./gradlew assembleDebug
 
-      - name: Upload the APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: icebreaker-apk
+          name: meridian-signal-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
