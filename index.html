@@ -121,6 +121,44 @@ button.row:active{transform:scale(.99)}
 .stat{flex:none;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13px}
 @media (orientation:landscape) and (max-height:520px){#app.chartmode{padding-bottom:8px}.chartmode .nav,.chartmode #c-stat{display:none}}
 @media (prefers-reduced-motion:no-preference){button{transition:transform .12s,background .15s}}
+
+.prow.cp,.size.cp{width:100%;background:none;border:0;border-bottom:1px solid var(--line);color:inherit;font:inherit;text-align:left;padding:12px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:56px}
+.size.cp{display:block;border-bottom:0}
+.prow.cp:active,.size.cp:active,.tkc:active{background:rgba(34,211,238,.12)}
+.cpi{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--cyan);border-radius:999px;padding:3px 9px;margin-left:8px;flex:none}
+.tap{margin:4px 0 8px}
+#toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);background:#EEF2FF;color:#07101F;font-weight:700;font-size:14px;padding:10px 18px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:50;max-width:88vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.tkh{display:flex;align-items:center;gap:8px;padding:2px 2px 6px}
+.tkh b{font-size:20px}
+.dotl{width:9px;height:9px;border-radius:50%;background:var(--up);box-shadow:0 0 0 0 rgba(45,212,168,.6);animation:pl 1.6s infinite}
+@keyframes pl{70%{box-shadow:0 0 0 8px rgba(45,212,168,0)}100%{box-shadow:0 0 0 0 rgba(45,212,168,0)}}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.tkc{flex:none;display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:92px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:linear-gradient(160deg,var(--panel2),var(--panel));color:var(--text)}
+.tkc .cl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.tkc .mono{font-size:15px}
+.tkc.all{border-color:var(--cyan)}.tkc.all .cl{color:var(--cyan)}
+.tkn{padding:6px 2px}
+#c-tk{flex:none}
+.steps{margin:8px 0 12px;padding-left:20px;font-size:14px;line-height:1.5;color:var(--muted)}
+.steps b{color:var(--text)}
+.topic{font-size:18px;text-align:center;padding:12px;margin:8px 0;border:1px dashed var(--cyan);border-radius:12px;color:var(--cyan);word-break:break-all}
+.prr{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);min-height:52px}
+.tagk{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 8px;margin-left:6px}
+.ghost.slim.on{color:var(--up);border-color:var(--up)}
+.addp{margin-top:14px}
+#pl-res{max-height:46vh;overflow-y:auto}
+.note2{margin:6px 0 0;line-height:1.55}
+.prr .ghost.slim{margin-top:0}
+.prr .ghost,.prr .ghost.danger{width:auto;flex:none;min-width:96px;margin:0}
+.prr .grow{flex:1;min-width:0}
+.tfrow{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tfrow::-webkit-scrollbar{display:none}
+.tfrow .tab{flex:none}
+.okt{color:var(--up);font-weight:600}
+.tfrow.wrapr{flex-wrap:wrap;overflow:visible;margin:6px 0 4px}
+.ver{margin:18px 0 6px;text-align:center;font-size:12px;color:var(--muted)}
+.pingcard .ghost{display:block;width:100%;margin:8px 0 0;min-height:48px}
 </style>
 </head>
 <body>
@@ -137,10 +175,41 @@ button.row:active{transform:scale(.99)}
     { sym: 'GBP/JPY', pip: 0.01,   pv: 6.5,  dec: 3, base: 194.30, vol: 0.12,   seed: 67, bias: -0.3 }
   ];
 
+  /* Approximate USD value of one unit of each currency. Used only for demo prices and for the
+     lot-size estimate, so it need not be exact. Check your broker's pip value before sizing. */
+  var CCY = { USD: 1, EUR: 1.10, GBP: 1.27, AUD: 0.65, NZD: 0.60, CAD: 0.72, CHF: 1.12, JPY: 0.0065, SEK: 0.095, NOK: 0.093,
+    DKK: 0.147, SGD: 0.75, HKD: 0.128, MXN: 0.055, ZAR: 0.055, TRY: 0.03, CNH: 0.14, PLN: 0.25, CZK: 0.043, HUF: 0.0028,
+    THB: 0.028, INR: 0.012, ILS: 0.27, KRW: 0.00072, NGN: 0.00066, CNY: 0.14, BRL: 0.18, RUB: 0.011, AED: 0.272, SAR: 0.267, TWD: 0.031 };
+  var FX_LIST = ('EUR/USD GBP/USD USD/JPY USD/CHF AUD/USD USD/CAD NZD/USD EUR/GBP EUR/JPY EUR/CHF EUR/AUD EUR/CAD EUR/NZD ' +
+    'GBP/JPY GBP/CHF GBP/AUD GBP/CAD GBP/NZD AUD/JPY AUD/CHF AUD/CAD AUD/NZD NZD/JPY NZD/CHF NZD/CAD CAD/JPY CAD/CHF CHF/JPY ' +
+    'USD/SGD USD/HKD USD/MXN USD/ZAR USD/TRY USD/NOK USD/SEK USD/DKK USD/PLN USD/CNH USD/CZK USD/HUF USD/THB USD/INR USD/ILS USD/KRW USD/NGN ' +
+    'EUR/TRY EUR/NOK EUR/SEK EUR/DKK EUR/PLN EUR/CZK EUR/HUF EUR/ZAR EUR/MXN EUR/SGD EUR/HKD EUR/CNH ' +
+    'GBP/SGD GBP/ZAR GBP/MXN GBP/NOK GBP/SEK GBP/PLN GBP/TRY AUD/SGD NZD/SGD SGD/JPY ZAR/JPY NOK/JPY SEK/JPY MXN/JPY TRY/JPY ' +
+    'CHF/SGD CAD/SGD CHF/NOK CHF/SEK CHF/ZAR EUR/ILS USD/BRL USD/RUB USD/SAR USD/AED USD/TWD USD/CNY').split(' ');
+
+  function hash(str) { var h = 7; for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0; return h; }
+
+  /* Builds the settings for any pair written like EUR/USD. Returns null if a currency is unknown. */
+  function makePair(sym) {
+    sym = String(sym).toUpperCase().replace(/\s+/g, '');
+    if (/^[A-Z]{6}$/.test(sym)) sym = sym.slice(0, 3) + '/' + sym.slice(3);
+    for (var i = 0; i < PAIRS.length; i++) if (PAIRS[i].sym === sym) return PAIRS[i];
+    var m = sym.match(/^([A-Z]{3})\/([A-Z]{3})$/);
+    if (!m || m[1] === m[2] || !CCY[m[1]] || !CCY[m[2]]) return null;
+    var base = CCY[m[1]] / CCY[m[2]], pip = base >= 20 ? 0.01 : 0.0001;
+    return { sym: sym, pip: pip, pv: +(100000 * pip * CCY[m[2]]).toFixed(2), dec: pip === 0.01 ? 3 : 5,
+      base: +base.toPrecision(5), vol: base * 0.0005, seed: hash(sym) % 1000, bias: 0 };
+  }
+
   var TF = {
-    '1h':   { label: 'H1', ms: 3600000,  mult: 1,   htf: '4h' },
+    '1min': { label: 'M1',  ms: 60000,   mult: 0.14, htf: '5min',  intraday: true, minStop: 4 },
+    '5min': { label: 'M5',  ms: 300000,  mult: 0.30, htf: '15min', intraday: true, minStop: 6 },
+    '15min': { label: 'M15', ms: 900000, mult: 0.55, htf: '30min', intraday: true, minStop: 8 },
+    '30min': { label: 'M30', ms: 1800000, mult: 0.75, htf: '1h',    intraday: true, minStop: 8 },
+    '1h':   { label: 'H1', ms: 3600000,  mult: 1,   htf: '4h', intraday: true },
     '4h':   { label: 'H4', ms: 14400000, mult: 1.9, htf: '1day' },
-    '1day': { label: 'D1', ms: 86400000, mult: 3.6, htf: null }
+    '1day': { label: 'D1', ms: 86400000, mult: 3.6, htf: null },
+    '1week': { label: 'W1', ms: 604800000, mult: 6.5, htf: null }
   };
 
   var SL_ATR = 1.5, TP1_ATR = 2.25, TP2_ATR = 3.75;   // 1:1.5 and 1:2.5 reward to risk
@@ -158,7 +227,7 @@ button.row:active{transform:scale(.99)}
   /* Sample candles for demo mode, used when no API key is set. */
   function demoCandles(p, tf, runs) {
     var mult = TF[tf].mult;
-    var idx = { '1h': 1, '4h': 2, '1day': 3 }[tf];
+    var idx = { '1h': 1, '4h': 2, '1day': 3, '5min': 4, '15min': 5, '1min': 6, '30min': 7, '1week': 8 }[tf];
     var r = rng(p.seed * 977 + idx * 131 + runs * 7919);
     var out = [], c = p.base;
     for (var i = 0; i < 120; i++) {
@@ -304,8 +373,8 @@ button.row:active{transform:scale(.99)}
         pass: htfPass, waiting: htf === 'pending' ? 'Checking ' + htfLabel : htfLabel + ' disagrees' },
       { id: 'stretch', label: 'Not overextended', need: d > 0 ? 'RSI under 72' : 'RSI over 28', value: 'RSI ' + res.rsi.toFixed(0),
         pass: d > 0 ? res.rsi < 72 : res.rsi > 28, waiting: 'Price looks overextended (RSI ' + res.rsi.toFixed(0) + ')' },
-      { id: 'stop', label: 'Stop wider than the spread', need: '8 pips or more', value: pl.slPips.toFixed(1) + ' pips',
-        pass: pl.slPips >= 8, waiting: 'Stop is only ' + pl.slPips.toFixed(1) + ' pips, too tight' }
+      { id: 'stop', label: 'Stop wider than the spread', need: (opts.minStop || 8) + ' pips or more', value: pl.slPips.toFixed(1) + ' pips',
+        pass: pl.slPips >= (opts.minStop || 8), waiting: 'Stop is only ' + pl.slPips.toFixed(1) + ' pips, too tight' }
     ];
     if (opts.session) {
       var now = opts.now || new Date(), hh = now.getUTCHours() + now.getUTCMinutes() / 60;
@@ -367,7 +436,7 @@ button.row:active{transform:scale(.99)}
     var minConf = opts.minConf || 65, trades = [], prevReady = false, prevSig = 'WAIT', busyUntil = -1, i, j;
     for (i = 60; i < cs.length; i++) {
       var res = analyse(cs.slice(0, i + 1)), pl = plan(res, pair, 5000, 1);
-      var rd = readiness(res, pl, null, { minConf: minConf });
+      var rd = readiness(res, pl, null, { minConf: minConf, minStop: opts.minStop });
       var fire = rd.ok && (!prevReady || prevSig !== res.signal);
       prevReady = rd.ok; prevSig = res.signal;
       if (!fire || i <= busyUntil) continue;
@@ -389,7 +458,7 @@ button.row:active{transform:scale(.99)}
   }
 
   var api = {
-    PAIRS: PAIRS, TF: TF, demoCandles: demoCandles, analyse: analyse, plan: plan,
+    PAIRS: PAIRS, FX_LIST: FX_LIST, CCY: CCY, makePair: makePair, TF: TF, demoCandles: demoCandles, analyse: analyse, plan: plan,
     readiness: readiness, marketOpen: marketOpen, due: due, series: series, backtest: backtest
   };
   root.Analysis = api;
@@ -412,7 +481,7 @@ button.row:active{transform:scale(.99)}
     this.cs = null; this.ser = null; this.dec = 5; this.tf = '1h';
     this.flags = { ema: true, bb: false, rsi: false, macd: false, sig: true, lvl: true };
     this.levels = []; this.markers = []; this.draws = []; this.tool = null; this.pending = null; this.cross = null;
-    this.barW = 9; this.right = 0; this.fitted = false;
+    this.barW = 9; this.right = 0; this.fitted = false; this.vz = 1; this.vp = 0; this.anim = 0; this.lastTap = null; this.samples = [];
     this.ptrs = {}; this.drag = null; this.pinch = null; this.sc = null;
     var self = this;
     canvas.style.touchAction = 'none';
@@ -429,17 +498,19 @@ button.row:active{transform:scale(.99)}
   }
 
   MChart.prototype.setData = function (cs, ser, dec, tf, keepView) {
-    var first = !this.cs || !keepView;
+    var first = !this.cs || !keepView, oldN = this.cs ? this.cs.length : 0, atEdge = !first && this.right >= oldN - 1;
     this.cs = cs; this.ser = ser; this.dec = dec; this.tf = tf;
-    if (first) this.reset(); else this.right = clamp(this.right, 5, this.cs.length - 1 + 60);
+    if (first) this.reset();
+    else { if (atEdge && cs.length > oldN) this.right += cs.length - oldN; this.right = clamp(this.right, 5, this.cs.length - 1 + 60); }
     this.draw();
   };
   MChart.prototype.reset = function () {
     var W = this.cv.clientWidth || 360, n = this.cs ? this.cs.length : 0;
     this.barW = clamp((W - 62) / Math.min(70, Math.max(n, 20)), 3, 14);
     this.right = n - 1 + 6;
-    this.cross = null; this.pending = null;
+    this.cross = null; this.pending = null; this.vz = 1; this.vp = 0; this.stopAnim();
   };
+  MChart.prototype.stopAnim = function () { if (this.anim) { cancelAnimationFrame(this.anim); this.anim = 0; } };
   MChart.prototype.layout = function () { return { W: this.cv.clientWidth, H: this.cv.clientHeight, axisW: 62, timeH: 22 }; };
   MChart.prototype.clampRight = function () {
     var L = this.layout(), plotW = L.W - L.axisW, n = this.cs.length, vis = plotW / this.barW;
@@ -458,9 +529,12 @@ button.row:active{transform:scale(.99)}
   MChart.prototype.pos = function (e) { var r = this.cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
   MChart.prototype.down = function (e) {
     this.cv.setPointerCapture && this.cv.setPointerCapture(e.pointerId);
-    var p = this.pos(e); this.ptrs[e.pointerId] = p;
-    var ids = Object.keys(this.ptrs);
-    if (ids.length === 1) this.drag = { x0: p.x, y0: p.y, right0: this.right, moved: false };
+    var p = this.pos(e); this.ptrs[e.pointerId] = p; this.stopAnim(); this.samples = [{ t: performance.now(), x: p.x }];
+    var ids = Object.keys(this.ptrs), L0 = this.layout(), sc = this.sc;
+    if (ids.length === 1) {
+      var onAxis = sc && p.x > L0.W - L0.axisW && p.y < sc.top + sc.h;
+      this.drag = { x0: p.x, y0: p.y, right0: this.right, moved: false, axis: !!onAxis, vz0: this.vz, vp0: this.vp, rng: sc ? sc.hi - sc.lo : 1, mainH: sc ? sc.h : 1 };
+    }
     else if (ids.length === 2) {
       var a = this.ptrs[ids[0]], b = this.ptrs[ids[1]];
       this.pinch = { d0: Math.hypot(a.x - b.x, a.y - b.y) || 1, bw0: this.barW, mx: (a.x + b.x) / 2 };
@@ -481,7 +555,16 @@ button.row:active{transform:scale(.99)}
     } else if (this.drag) {
       var dx = p.x - this.drag.x0;
       if (Math.abs(dx) > 5 || Math.abs(p.y - this.drag.y0) > 5) this.drag.moved = true;
-      if (this.drag.moved) { this.right = this.drag.right0 - dx / this.barW; this.clampRight(); this.draw(); }
+      if (this.drag.moved) {
+        var dy = p.y - this.drag.y0;
+        if (this.drag.axis) { this.vz = clamp(this.drag.vz0 * Math.exp(-dy / 160), 0.15, 6); }
+        else {
+          this.right = this.drag.right0 - dx / this.barW; this.clampRight();
+          if (this.sc && p.y < this.sc.top + this.sc.h) this.vp = this.drag.vp0 + dy / this.drag.mainH * this.drag.rng;
+          this.samples.push({ t: performance.now(), x: p.x }); if (this.samples.length > 6) this.samples.shift();
+        }
+        this.draw();
+      }
     }
   };
   MChart.prototype.up = function (e, cancel) {
@@ -489,7 +572,32 @@ button.row:active{transform:scale(.99)}
     delete this.ptrs[e.pointerId];
     if (n === 2) { this.pinch = null; var k = Object.keys(this.ptrs)[0]; if (k) this.drag = { x0: this.ptrs[k].x, y0: this.ptrs[k].y, right0: this.right, moved: true }; return; }
     this.drag = null; this.pinch = null;
-    if (!cancel && was && !was.moved) this.tap(p.x, p.y);
+    if (cancel || !was) return;
+    if (!was.moved) {
+      var now = performance.now(), lt = this.lastTap;
+      if (lt && now - lt.t < 320 && Math.hypot(p.x - lt.x, p.y - lt.y) < 30) {
+        this.lastTap = null; var L1 = this.layout();
+        if (p.x > L1.W - L1.axisW) { this.vz = 1; this.vp = 0; this.draw(); } else { this.cross = null; this.zoomAt(p.x, 1.7); }
+        return;
+      }
+      this.lastTap = { t: now, x: p.x, y: p.y };
+      return this.tap(p.x, p.y);
+    }
+    if (was.axis) return;
+    var sm = this.samples, self = this;
+    if (sm.length >= 2) {
+      var a = sm[0], b = sm[sm.length - 1], dt = b.t - a.t, v = dt > 0 && performance.now() - b.t < 80 ? (b.x - a.x) / dt : 0;
+      if (Math.abs(v) > 0.12) {
+        var prev = performance.now();
+        var step = function (t) {
+          var d = Math.min(40, t - prev); prev = t;
+          self.right -= v * d / self.barW; v *= Math.exp(-d / 320);
+          var before = self.right; self.clampRight(); self.draw();
+          if (Math.abs(v) > 0.02 && Math.abs(before - self.right) < 0.001) self.anim = requestAnimationFrame(step); else self.anim = 0;
+        };
+        this.anim = requestAnimationFrame(step);
+      }
+    }
   };
   MChart.prototype.price = function (y) { var s = this.sc; return s ? s.hi - (y - s.top) / s.h * (s.hi - s.lo) : null; };
   MChart.prototype.indexAt = function (x) {
@@ -544,6 +652,7 @@ button.row:active{transform:scale(.99)}
     }
     if (!isFinite(hi)) return;
     var pad = (hi - lo) * 0.08 || hi * 0.0005; hi += pad; lo -= pad;
+    var mid = (hi + lo) / 2 + this.vp, half = (hi - lo) / 2 * this.vz; hi = mid + half; lo = mid - half;
     var Y = function (v) { return (hi - v) / (hi - lo) * mainH; };
     this.sc = { top: 0, h: mainH, hi: hi, lo: lo };
     var dec = this.dec;
@@ -706,13 +815,19 @@ button.row:active{transform:scale(.99)}
   var A = window.Analysis;
   var UP = '#2DD4A8', DOWN = '#FF6B8A', MUTED = '#98A3C7', INK = '#07101F', AMBER = '#FBBF24';
   var CYAN = '#22D3EE', VIOLET = '#8B5CF6', PINK = '#F472B6';
-  var TFS = [['1h', 'H1'], ['4h', 'H4'], ['1day', 'D1']];
+  var TFS = [['1min', 'M1'], ['5min', 'M5'], ['15min', 'M15'], ['30min', 'M30'], ['1h', 'H1'], ['4h', 'H4'], ['1day', 'D1'], ['1week', 'W1']];
 
   function load(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
-  var cfg = Object.assign({ key: '', balance: 5000, risk: 1, tf: '1h', every: 5, minConf: 65, alerts: true }, load('ms_cfg', {}));
+  var cfg = Object.assign({ key: '', balance: 5000, risk: 1, tf: '1h', every: 5, minConf: 65, alerts: true, topic: '', pingTfs: null }, load('ms_cfg', {}));
+  if (!Array.isArray(cfg.pingTfs)) cfg.pingTfs = [cfg.tf || '1h'];
+  if (!cfg.topic) {
+    var rb = new Uint8Array(8); try { crypto.getRandomValues(rb); } catch (e) { for (var q = 0; q < 8; q++) rb[q] = Math.random() * 256; }
+    cfg.topic = 'meridian-' + Array.prototype.map.call(rb, function (b) { return (b % 36).toString(36); }).join('');
+    try { localStorage.setItem('ms_cfg', JSON.stringify(cfg)); } catch (e) {}
+  }
   var readyState = load('ms_ready', {});   // "EUR/USD|1h" -> { ready, sig }
   var lastPing = load('ms_ping', {});      // "EUR/USD|1h" -> { sig, at }
   var track = load('ms_track', []);        // every signal that reached Ready, followed to its result
@@ -723,6 +838,17 @@ button.row:active{transform:scale(.99)}
   var draws = load('ms_draw', {});         // "EUR/USD" -> drawings, lines and price alerts
   var chartFlags = Object.assign({ ema: true, bb: false, rsi: false, macd: false, sig: true, lvl: true }, load('ms_chart', {}));
   var chartInst = null, chartKey = null, btCache = {}, serCache = {};
+  var VERSION = '3.3';
+  var DEFAULT_WATCH = ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CAD', 'GBP/JPY'];
+  var watch = load('ms_watch', null);
+  if (!Array.isArray(watch) || !watch.length) watch = DEFAULT_WATCH.slice();
+  var plq = '', WLC = null;
+  function WL() {
+    if (!WLC || WLC.key !== watch.join(',')) WLC = { key: watch.join(','), list: watch.map(A.makePair).filter(Boolean) };
+    if (selected >= WLC.list.length) selected = 0;
+    return WLC.list;
+  }
+  var live = {}, liveAt = 0, tickBusy = false, lastTick = 0, lastTry = 0;
   var CH = { bg: '#0B1020', panel: '#131A33', grid: '#1B2448', line: '#27325A', text: '#EEF2FF', muted: MUTED, up: UP, down: DOWN, cyan: CYAN,
     violet: '#A78BFA', amber: AMBER, ink: INK, ema20: '#EEF2FF', ema50: '#A78BFA', bb: '#6B79A8', bbFill: 'rgba(107,121,168,.12)', zone: 'rgba(139,92,246,.10)' };
 
@@ -734,6 +860,30 @@ button.row:active{transform:scale(.99)}
   function tfLabel(tf) { return A.TF[tf].label; }
   function sigColor(s) { return s === 'BUY' ? UP : s === 'SELL' ? DOWN : MUTED; }
   function sigGrad(s) { return s === 'BUY' ? 'linear-gradient(90deg,' + UP + ',' + CYAN + ')' : 'linear-gradient(90deg,' + DOWN + ',' + PINK + ')'; }
+
+  /* ---------- copy ---------- */
+  var toastTimer = null;
+  function toast(msg) {
+    var el = document.getElementById('toast');
+    if (!el) { el = document.createElement('div'); el.id = 'toast'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+    el.textContent = msg; el.className = 'show';
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.className = ''; }, 1700);
+  }
+  function copyText(txt, label) {
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = txt; ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); return ok;
+    }
+    function done(ok) { toast(ok ? 'Copied ' + label : 'Could not copy. Press and hold the number instead.'); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(fallback()); });
+    else done(fallback());
+  }
+  function ticketText(pair, plan, sig) {
+    var f = function (v) { return fmt(v, pair.dec); };
+    return sig + ' ' + pair.sym + ' (' + tfLabel(cfg.tf) + ')\nEntry ' + f(plan.entry) + '\nStop loss ' + f(plan.sl) +
+      '\nTake profit 1 ' + f(plan.tp1) + '\nTake profit 2 ' + f(plan.tp2) + '\nLots ' + plan.lots.toFixed(2);
+  }
 
   /* ---------- notifications ---------- */
   function LN() { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications; }
@@ -750,9 +900,18 @@ button.row:active{transform:scale(.99)}
       : ('Notification' in window ? Notification.requestPermission().then(function (x) { return x === 'granted'; }) : Promise.resolve(false));
     return p.then(function (ok) { perm = ok ? 'granted' : 'denied'; return ok; });
   }
-  function notify(title, body) {
+  var chanReady = null;
+  function channel() {
     var ln = LN();
-    if (ln) return ln.schedule({ notifications: [{ id: Math.floor(Date.now() % 2147483000), title: title, body: body }] });
+    if (!ln || !ln.createChannel) return Promise.resolve();
+    if (!chanReady) chanReady = ln.createChannel({ id: 'signals', name: 'Trade signals', description: 'A trade is ready, target hit, stop hit, price alerts', importance: 5, visibility: 1, vibration: true, lights: true }).catch(function () {});
+    return chanReady;
+  }
+  function notify(title, body, extra) {
+    var ln = LN();
+    if (ln) return channel().then(function () {
+      return ln.schedule({ notifications: [{ id: Math.floor(Date.now() % 2147483000), title: title, body: body.split('\n')[0], largeBody: body, summaryText: 'Meridian Signal', channelId: 'signals', extra: extra || {} }] });
+    });
     if ('serviceWorker' in navigator && 'Notification' in window && Notification.permission === 'granted') {
       return navigator.serviceWorker.ready.then(function (reg) {
         return reg.showNotification(title, { body: body, icon: 'icon-192.png', badge: 'icon-192.png', vibrate: [200, 100, 200], tag: title });
@@ -780,7 +939,9 @@ button.row:active{transform:scale(.99)}
     }).then(function (r) { return r.json(); }).then(function (j) {
       if (j.status !== 'ok' || !j.values) throw new Error(j.message || 'No data');
       var cs = j.values.slice().reverse().map(function (v) { return { t: v.datetime, o: +v.open, h: +v.high, l: +v.low, c: +v.close }; });
-      return cs.slice(0, -1);   // drop the candle that is still forming
+      var closed = cs.slice(0, -1);   // analysis only uses closed candles
+      closed.form = cs[cs.length - 1];   // kept so the chart can show the forming candle
+      return closed;
     });
   }
 
@@ -792,6 +953,50 @@ button.row:active{transform:scale(.99)}
     var m = String(t).match(/^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}))?/);
     if (!m) return String(t);
     return tf === '1day' || !m[4] ? m[3] + '/' + m[2] : m[3] + ' ' + m[4] + ':' + m[5];
+  }
+
+  /* ---------- live candle (the one still forming) ---------- */
+  function parseT(t) { return Date.parse(String(t).replace(' ', 'T') + (String(t).length > 10 ? 'Z' : 'T00:00:00Z')); }
+  function isoT(ms) { return new Date(ms).toISOString().slice(0, 19).replace('T', ' '); }
+  function formFor(pair, tf) {
+    var key = pair.sym + '|' + tf, hit = store[key];
+    if (!hit || !hit.cs || !hit.cs.length) return null;
+    var ms = A.TF[tf].ms, last = hit.cs[hit.cs.length - 1], start = parseT(last.t) + ms;
+    if (isNaN(start) || Date.now() >= start + ms) return null;
+    var lv = live[key];
+    if (!lv || lv.start !== start) {
+      var f = hit.cs.form;
+      lv = live[key] = f && parseT(f.t) === start ? { start: start, t: f.t, o: f.o, h: f.h, l: f.l, c: f.c }
+        : { start: start, t: isoT(start), o: last.c, h: last.c, l: last.c, c: last.c };
+    }
+    return lv;
+  }
+  function withLive(pair, tf, cs) {
+    var lv = formFor(pair, tf);
+    return lv ? cs.concat([{ t: lv.t, o: lv.o, h: lv.h, l: lv.l, c: lv.c }]) : cs;
+  }
+  function applyTick(pair, tf, price) {
+    var lv = formFor(pair, tf); if (!lv || !isFinite(price)) return false;
+    lv.c = price; lv.h = Math.max(lv.h, price); lv.l = Math.min(lv.l, price); return true;
+  }
+  function tick() {
+    if (screen !== 'chart' || document.hidden) return;
+    var pair = WL()[selected], tf = cfg.tf, now = Date.now();
+    var hit = store[pair.sym + '|' + tf];
+    if (!demoMode() && !A.marketOpen()) return;
+    if (hit && hit.cs && !formFor(pair, tf) && !busy && !demoMode() && now - lastTry > 20000) { lastTry = now; refresh(false); return; }   // a new candle should exist
+    if (demoMode()) {
+      var lv = formFor(pair, tf); if (!lv) return;
+      applyTick(pair, tf, lv.c + (Math.random() - 0.5) * pair.vol * 0.3 + (lv.o - lv.c) * 0.01);
+      liveAt = now; return pushChart();
+    }
+    if (!A.marketOpen() || tickBusy || now - lastTick < 15000) return;
+    tickBusy = true; lastTick = now;
+    throttle().then(function () {
+      return fetch('https://api.twelvedata.com/price?symbol=' + encodeURIComponent(pair.sym) + '&apikey=' + encodeURIComponent(cfg.key));
+    }).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.price && applyTick(pair, tf, +j.price)) { liveAt = Date.now(); pushChart(); }
+    }).catch(function () {}).then(function () { tickBusy = false; });
   }
 
   /* Returns the candles for pair and timeframe, refetching only when a new candle should exist. */
@@ -811,19 +1016,26 @@ button.row:active{transform:scale(.99)}
     });
   }
 
-  function evaluate(pair) {
-    var info = A.TF[cfg.tf], hit = store[pair.sym + '|' + cfg.tf];
-    if (!hit || !hit.cs || hit.cs.length < 60) { evals[pair.sym] = { error: hit && hit.error || 'No data' }; return; }
+  function activeTfs() {
+    var out = [cfg.tf];
+    (cfg.pingTfs || []).forEach(function (t) { if (out.indexOf(t) < 0 && A.TF[t]) out.push(t); });
+    return out;
+  }
+  function pingsOn(tf) { return (cfg.pingTfs || []).indexOf(tf) >= 0; }
+  function evaluate(pair) { evals[pair.sym] = evalFor(pair, cfg.tf); }
+  function evalFor(pair, tfk) {
+    var info = A.TF[tfk], hit = store[pair.sym + '|' + tfk];
+    if (!hit || !hit.cs || hit.cs.length < 60) return { error: hit && hit.error || 'No data' };
     var res = A.analyse(hit.cs), pl = A.plan(res, pair, +cfg.balance, +cfg.risk), htf = null;
     if (info.htf && res.signal !== 'WAIT') {
       var h = store[pair.sym + '|' + info.htf];
       htf = h && h.cs && h.cs.length >= 60 ? A.analyse(h.cs) : 'pending';
     }
-    evals[pair.sym] = {
+    return {
       res: res, plan: pl, error: hit.error, cs: hit.cs,
       ready: A.readiness(res, pl, htf, {
         minConf: +cfg.minConf || 65, htfLabel: info.htf ? tfLabel(info.htf) + ' trend' : '',
-        session: cfg.tf === '1h' && !demoMode(), now: new Date()
+        session: !!info.intraday && !demoMode(), minStop: info.minStop, now: new Date()
       })
     };
   }
@@ -832,10 +1044,10 @@ button.row:active{transform:scale(.99)}
   function openTrade(sym, tf, dir) {
     return track.some(function (s) { return s.status === 'open' && s.sym === sym && s.tf === tf && s.dir === dir; });
   }
-  function trackAdd(pair, ev) {
+  function trackAdd(pair, ev, tfk) {
     var cs = ev.cs, p = ev.plan, dir = p.dir;
-    if (openTrade(pair.sym, cfg.tf, dir)) return;
-    track.push({ id: pair.sym + '|' + cfg.tf + '|' + cs[cs.length - 1].t, sym: pair.sym, tf: cfg.tf, dir: dir, dec: pair.dec,
+    if (openTrade(pair.sym, tfk, dir)) return;
+    track.push({ id: pair.sym + '|' + tfk + '|' + cs[cs.length - 1].t, sym: pair.sym, tf: tfk, dir: dir, dec: pair.dec,
       entry: p.entry, sl: p.sl, tp1: p.tp1, t: String(cs[cs.length - 1].t), at: Date.now(), status: 'open', r: 0, conf: ev.res.conf });
     if (track.length > 200) track = track.slice(-200);
     save('ms_track', track);
@@ -887,44 +1099,52 @@ button.row:active{transform:scale(.99)}
     if (changed) save('ms_draw', draws);
   }
 
-  function alertIfReady(pair) {
-    var ev = evals[pair.sym];
+  function alertIfReady(pair, tfk, ev) {
     if (!ev || !ev.res) return;
-    var key = pair.sym + '|' + cfg.tf, prev = readyState[key];
+    var key = pair.sym + '|' + tfk, prev = readyState[key];
     var now = { ready: ev.ready.ok, sig: ev.res.signal };
     readyState[key] = now; save('ms_ready', readyState);
     if (prev === undefined || demoMode() || !now.ready) return;
     if (prev.ready && prev.sig === now.sig) return;
-    trackAdd(pair, ev);
+    trackAdd(pair, ev, tfk);
     if (!cfg.alerts) return;
     var pg = lastPing[key];
-    if (pg && pg.sig === now.sig && Date.now() - pg.at < 4 * A.TF[cfg.tf].ms) return;   // no repeats while it flickers
+    if (pg && pg.sig === now.sig && Date.now() - pg.at < 4 * A.TF[tfk].ms) return;   // no repeats while it flickers
     lastPing[key] = { sig: now.sig, at: Date.now() }; save('ms_ping', lastPing);
     var p = ev.plan, f = function (v) { return fmt(v, pair.dec); };
-    notify(now.sig + ' ' + pair.sym + ' is ready (' + tfLabel(cfg.tf) + ')',
-      'Entry ' + f(p.entry) + '  Stop ' + f(p.sl) + '  Target ' + f(p.tp1) + '  Size ' + p.lots.toFixed(2) + ' lots  Strength ' + ev.res.conf + '%');
+    notify(now.sig + ' ' + pair.sym + ' is ready (' + tfLabel(tfk) + ')',
+      'Entry ' + f(p.entry) + '  Stop ' + f(p.sl) + '  Target ' + f(p.tp1) + '\nTarget 2 ' + f(p.tp2) + '\nSize ' + p.lots.toFixed(2) + ' lots  Strength ' + ev.res.conf + '%',
+      { sym: pair.sym, tf: tfk });
   }
 
   function refresh(force) {
     if (busy) return Promise.resolve();
     if (!demoMode() && !A.marketOpen()) {
-      statusText = 'Market closed'; A.PAIRS.forEach(evaluate); render(); return Promise.resolve();
+      statusText = 'Market closed'; WL().forEach(evaluate); render(); return Promise.resolve();
     }
     busy = true; statusText = 'Checking'; render();
     if (demoMode() && force) runs += 1;
-    var tf = cfg.tf, htf = A.TF[tf].htf, chain = Promise.resolve();
-    A.PAIRS.forEach(function (pair) {
-      chain = chain.then(function () { return candles(pair, tf, force); }).then(function (hit) {
-        if (!hit.cs || hit.cs.length < 60) return;
-        if (!demoMode()) trackResolve(pair, tf, hit.cs);
-        checkPriceAlerts(pair, hit.cs);
-        var res = A.analyse(hit.cs);
-        if (htf && res.signal !== 'WAIT') return candles(pair, htf, force);   // only fetch the higher timeframe for real candidates
-      }).then(function () { evaluate(pair); alertIfReady(pair); render(); });
+    var chain = Promise.resolve();
+    activeTfs().forEach(function (tf) {
+      var htf = A.TF[tf].htf, shown = tf === cfg.tf;
+      WL().forEach(function (pair) {
+        chain = chain.then(function () { return candles(pair, tf, force); }).then(function (hit) {
+          if (!hit.cs || hit.cs.length < 60) return;
+          if (!demoMode()) trackResolve(pair, tf, hit.cs);
+          if (shown) checkPriceAlerts(pair, hit.cs);
+          var res = A.analyse(hit.cs);
+          if (htf && res.signal !== 'WAIT') return candles(pair, htf, force);   // only fetch the higher timeframe for real candidates
+        }).then(function () {
+          var ev = evalFor(pair, tf);
+          if (shown) evals[pair.sym] = ev;
+          if (pingsOn(tf)) alertIfReady(pair, tf, ev);
+          if (shown) render();
+        });
+      });
     });
     return chain.then(function () {
       busy = false;
-      var errs = A.PAIRS.filter(function (p) { return evals[p.sym] && evals[p.sym].error && !evals[p.sym].res; }).length;
+      var errs = WL().filter(function (p) { return evals[p.sym] && evals[p.sym].error && !evals[p.sym].res; }).length;
       statusText = errs ? errs + ' pair' + (errs > 1 ? 's' : '') + ' failed' : 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       render();
     });
@@ -932,7 +1152,9 @@ button.row:active{transform:scale(.99)}
 
   function schedule() {
     if (timer) clearInterval(timer);
-    timer = setInterval(function () { refresh(false); }, Math.max(1, +cfg.every || 5) * 60000);
+    var mins = Math.max(1, +cfg.every || 5);
+    activeTfs().forEach(function (t) { mins = Math.min(mins, Math.max(1, A.TF[t].ms / 60000)); });   // never slower than the fastest candle
+    timer = setInterval(function () { refresh(false); }, mins * 60000);
   }
 
   /* ---------- chart ---------- */
@@ -1011,7 +1233,7 @@ button.row:active{transform:scale(.99)}
       ['record', 'Record', '<path d="M4 4v16h16M8 15l4-4 3 3 5-6" />'],
       ['settings', 'Settings', '<circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" />']];
     return '<nav class="nav">' + items.map(function (it) {
-      return '<button data-nav="' + it[0] + '" class="' + (screen === it[0] ? 'on' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + it[2] + '</svg><span>' + it[1] + '</span></button>';
+      return '<button data-nav="' + it[0] + '" class="' + (screen === it[0] || (it[0] === 'list' && screen === 'pairs') ? 'on' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + it[2] + '</svg><span>' + it[1] + '</span></button>';
     }).join('') + '</nav>';
   }
 
@@ -1031,7 +1253,7 @@ button.row:active{transform:scale(.99)}
 
   function viewList() {
     var groups = { ready: [], watch: [], none: [] };
-    A.PAIRS.forEach(function (p, i) {
+    WL().forEach(function (p, i) {
       var ev = evals[p.sym], k = !ev || !ev.res ? 'none' : ev.ready.ok ? 'ready' : ev.res.signal === 'WAIT' ? 'none' : 'watch';
       groups[k].push([p, i, ev && ev.res ? ev.res.conf : 0]);
     });
@@ -1040,9 +1262,11 @@ button.row:active{transform:scale(.99)}
     var h = brandBar();
     h += '<div class="tiles">' + tile('Ready', groups.ready.length, UP, 'to trade now') + tile('Watching', groups.watch.length, AMBER, 'not yet') +
       tile('Win rate', st.closed ? st.rate + '%' : '-', CYAN, st.closed ? st.closed + ' closed' : 'no results yet') + '</div>';
-    h += '<div class="tabs">';
+    h += '<div class="tfrow" id="tfrow">';
     TFS.forEach(function (t) { h += '<button class="tab' + (cfg.tf === t[0] ? ' on' : '') + '" data-tf="' + t[0] + '">' + t[1] + '</button>'; });
-    h += '<span class="spacer"></span><span class="muted small">' + statusText + '</span><button class="run" data-act="run"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Checking' : 'Check now') + '</button></div>';
+    h += '</div><div class="tabs"><span class="muted small">' + statusText + '</span><span class="spacer"></span><button class="run" data-act="run"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Checking' : 'Check now') + '</button></div>';
+    var perDay = 0; activeTfs().forEach(function (t) { perDay += WL().length * Math.round(86400000 / A.TF[t].ms); });
+    if (!demoMode() && perDay > 700) h += '<div class="note warn"><b>Heavy on the free key.</b> ' + WL().length + ' pairs on ' + activeTfs().map(tfLabel).join(', ') + ' needs about ' + perDay + ' data calls a day. A free Twelve Data key allows 800. Watch fewer pairs or use a longer timeframe, or some will fail late in the day.</div>';
     if (!demoMode() && !open) h += '<div class="note">Forex is closed until Sunday evening (UTC). Showing the last prices from Friday.</div>';
     if (cfg.alerts && perm !== 'granted' && perm !== 'unknown') {
       h += '<div class="note warn"><b>Alerts are off.</b> Turn on notifications to get a ping the moment a trade is ready.<br><button class="ghost slim" data-act="perm-list">Turn on alerts</button></div>';
@@ -1053,9 +1277,10 @@ button.row:active{transform:scale(.99)}
         (arr.length ? arr.map(function (x) { return row(x[0], x[1]); }).join('') : '<div class="empty">' + empty + '</div>');
     };
     h += '<div class="list">' + sec('Ready to trade', UP, groups.ready, 'Nothing is ready yet. You will get a notification the moment something is.') +
-      sec('Watching', AMBER, groups.watch) + sec('No trade', MUTED, groups.none) + '</div>';
+      sec('Watching', AMBER, groups.watch) + sec('No trade', MUTED, groups.none) + '</div>' +
+      '<button class="ghost wide addp" data-nav="pairs">+ Add or remove pairs (' + WL().length + ' watched)</button><div class="ver">v' + VERSION + '</div>';
     h += '<p class="foot">' + (demoMode() ? 'These are sample prices, not the real market. Add a Twelve Data key in Settings for live signals. ' : '') +
-      'A pair is ready only when every check passes: signal strength, trend and momentum agree, trend strength, higher timeframe, not overextended, a stop wider than the spread' + (cfg.tf === '1h' && !demoMode() ? ' and London or New York hours' : '') + '. No signal is guaranteed. Not financial advice.</p>';
+      'A pair is ready only when every check passes: signal strength, trend and momentum agree, trend strength, higher timeframe, not overextended, a stop wider than the spread' + (A.TF[cfg.tf].intraday && !demoMode() ? ' and London or New York hours' : '') + '. No signal is guaranteed. Not financial advice.</p>';
     return h + nav();
   }
 
@@ -1065,11 +1290,26 @@ button.row:active{transform:scale(.99)}
     return '<div class="ind"><div class="between"><b>' + name + '</b><span style="color:' + c + ';font-weight:600">' + text + '</span></div><div class="mono muted">' + value + '</div>' + meter + '</div>';
   }
   function planRow(label, value, sub, color) {
-    return '<div class="prow"><span><i class="sw" style="background:' + color + '"></i>' + label + '</span><span class="right col"><span class="mono">' + value + '</span><span class="muted small">' + sub + '</span></span></div>';
+    return '<button class="prow cp" data-copy="' + esc(value) + '" data-cl="' + esc(label.toLowerCase()) + '"><span><i class="sw" style="background:' + color + '"></i>' + label + '</span>' +
+      '<span class="right col"><span class="mono">' + value + '</span><span class="muted small">' + sub + '</span></span><span class="cpi">Copy</span></button>';
   }
 
+  /* Plain-English read of the numbers. Built from the rules, not from a language model. */
+  function analystNote(p, ev) {
+    var r = ev.res, pl = ev.plan, rd = ev.ready, f = function (v) { return fmt(v, p.dec); }, out = [];
+    out.push(p.sym + ' is in a ' + (r.trend > 0 ? 'rising' : 'falling') + ' trend (EMA 20 ' + (r.trend > 0 ? 'above' : 'below') + ' EMA 50) and momentum is ' +
+      (r.mom > 0 ? 'positive' : 'negative') + '.');
+    out.push(r.adx >= 25 ? 'The trend has real strength (ADX ' + r.adx.toFixed(0) + ').' : r.adx >= 20 ? 'The trend is moderate (ADX ' + r.adx.toFixed(0) + ').' : 'The market is drifting sideways (ADX ' + r.adx.toFixed(0) + '), so signals here are less reliable.');
+    out.push(r.rsi > 70 ? 'RSI ' + r.rsi.toFixed(0) + ' says price is stretched upward.' : r.rsi < 30 ? 'RSI ' + r.rsi.toFixed(0) + ' says price is stretched downward.' : 'RSI ' + r.rsi.toFixed(0) + ' is not stretched.');
+    if (pl) {
+      out.push(rd.ok ? 'Every check passes, so this is a ' + (pl.dir > 0 ? 'buy' : 'sell') + ' setup: ' + f(pl.entry) + ' in, risking ' + pl.slPips.toFixed(0) + ' pips for ' + pl.tp1Pips.toFixed(0) + ' to ' + pl.tp2Pips.toFixed(0) + '.'
+        : 'It leans ' + (pl.dir > 0 ? 'buy' : 'sell') + ' but is not ready: ' + rd.waiting.toLowerCase() + '.');
+      out.push('The idea is wrong if price reaches ' + f(pl.sl) + '.');
+    } else out.push('No side has a clear edge, so the safest move is to wait.');
+    return '<div class="card"><div class="label">Analyst note <span class="tagk">Rules-based</span></div><p class="note2">' + esc(out.join(' ')) + '</p></div>';
+  }
   function viewDetail() {
-    var p = A.PAIRS[selected], ev = evals[p.sym];
+    var p = WL()[selected], ev = evals[p.sym];
     if (!ev || !ev.res) return backBar(p.sym) + '<p class="foot">No data yet.</p>';
     var res = ev.res, plan = ev.plan, rd = ev.ready, f = function (v) { return fmt(v, p.dec); };
     var c = sigColor(res.signal);
@@ -1080,7 +1320,7 @@ button.row:active{transform:scale(.99)}
       pill(res.signal, rd.ok) + '</div>' +
       '<div class="banner' + (rd.ok ? ' go' : '') + '" style="' + (rd.ok ? 'background:' + sigGrad(res.signal) + ';color:' + INK : '') + '">' +
       (res.signal === 'WAIT' ? 'No clear direction. Nothing to trade here.' : rd.ok ? 'Ready to trade: all ' + rd.total + ' checks pass.' : rd.passed + ' of ' + rd.total + ' checks pass. ' + esc(rd.waiting) + '.') + '</div></div>';
-    h += '<button class="primary wide" data-act="open-chart">Open interactive chart</button>';
+    h += '<button class="primary wide" data-act="open-chart">Open interactive chart</button>' + analystNote(p, ev);
     if (rd.checks.length) {
       h += '<div class="card"><div class="label">Trade-ready checks</div>' + rd.checks.map(function (k) {
         return '<div class="chk"><span class="mark ' + (k.pass ? 'ok' : 'no') + '">' + (k.pass ? 'Pass' : 'Fail') + '</span>' +
@@ -1089,12 +1329,13 @@ button.row:active{transform:scale(.99)}
     }
     if (plan) {
       h += '<div class="card"><div class="label">Trade plan</div><div class="head2">' + (plan.dir > 0 ? 'Buy ' : 'Sell ') + p.sym + ' at market</div>' +
+        '<button class="primary wide" data-copyall="1">Copy whole trade</button><p class="foot tap">Or tap any line to copy just that number.</p>' +
         planRow('Entry', f(plan.entry), 'Last close', '#EEF2FF') +
         planRow('Stop loss', f(plan.sl), plan.slPips.toFixed(1) + ' pips (1.5 x ATR)', DOWN) +
         planRow('Take profit 1', f(plan.tp1), plan.tp1Pips.toFixed(1) + ' pips (1.5 times your risk)', UP) +
         planRow('Take profit 2', f(plan.tp2), plan.tp2Pips.toFixed(1) + ' pips (2.5 times your risk)', CYAN) +
-        '<div class="size"><div><span class="mono huge">' + (plan.ok ? plan.lots.toFixed(2) : '-') + '</span> <span class="muted">lots</span></div>' +
-        '<div class="muted small">' + (plan.ok ? 'Risking about $' + money(plan.riskUsd) + ' (' + cfg.risk + '% of $' + money(cfg.balance) + ')' : 'Set balance and risk in Settings') + '</div></div>' +
+        '<button class="size cp" data-copy="' + (plan.ok ? plan.lots.toFixed(2) : '') + '" data-cl="lot size"><div><span class="mono huge">' + (plan.ok ? plan.lots.toFixed(2) : '-') + '</span> <span class="muted">lots</span> <span class="cpi">Copy</span></div>' +
+        '<div class="muted small">' + (plan.ok ? 'Risking about $' + money(plan.riskUsd) + ' (' + cfg.risk + '% of $' + money(cfg.balance) + ')' : 'Set balance and risk in Settings') + '</div></button>' +
         '<p class="foot">Assumes about $' + p.pv.toFixed(2) + ' per pip per lot. Check your broker’s contract size before sizing a real trade.</p></div>';
     }
     h += '<div class="card"><div class="legend"><span><i style="background:#EEF2FF"></i>EMA 20</span><span><i style="background:' + VIOLET + '"></i>EMA 50</span><span><i style="background:#6B79A8"></i>Bollinger</span></div><canvas id="chart" role="img" aria-label="Candlestick chart with trade levels"></canvas></div>';
@@ -1108,6 +1349,43 @@ button.row:active{transform:scale(.99)}
       indRow('ATR (14)', (res.atr / p.pip).toFixed(1) + ' pips per candle', 'Sets stop distance', 0, false) +
       '<div class="between small muted"><span>Bearish</span><span>Bullish</span></div></div>';
     return h;
+  }
+
+  function pairKind(sym) {
+    var M = { USD: 1, EUR: 1, GBP: 1, JPY: 1, CHF: 1, AUD: 1, NZD: 1, CAD: 1 }, a = sym.slice(0, 3), b = sym.slice(4);
+    return M[a] && M[b] ? (a === 'USD' || b === 'USD' ? 'Major' : 'Minor') : 'Exotic';
+  }
+  function pairResults(q) {
+    var raw = String(q || '').toUpperCase().replace(/[^A-Z]/g, ''), out = [], seen = {};
+    var custom = raw.length === 6 ? A.makePair(raw) : null;
+    if (custom && A.FX_LIST.indexOf(custom.sym) < 0) { out.push(custom.sym); seen[custom.sym] = 1; }
+    A.FX_LIST.forEach(function (sy) {
+      if (out.length >= 40 || seen[sy]) return;
+      if (!raw || sy.replace('/', '').indexOf(raw) >= 0) { out.push(sy); seen[sy] = 1; }
+    });
+    if (!out.length) return '<p class="foot">No match. Type a pair like EURUSD, or just a currency like NGN.</p>';
+    return out.map(function (sy) {
+      var has = watch.indexOf(sy) >= 0;
+      return '<div class="prr"><span class="grow"><b>' + sy + '</b> <span class="tagk">' + pairKind(sy) + '</span></span>' +
+        '<button class="ghost slim' + (has ? ' on' : '') + '" data-' + (has ? 'prem' : 'padd') + '="' + sy + '">' + (has ? 'Added \u2713' : '+ Add') + '</button></div>';
+    }).join('');
+  }
+  function haveList() {
+    return WL().map(function (p) {
+      return '<div class="prr"><span class="grow"><b>' + p.sym + '</b></span><button class="ghost slim danger" data-prem="' + p.sym + '">Remove</button></div>';
+    }).join('');
+  }
+  function pingNote() {
+    if (!cfg.pingTfs.length) return 'No timeframe selected, so the app will not ping you.';
+    var per = 0; cfg.pingTfs.forEach(function (t) { per += WL().length * Math.round(86400000 / A.TF[t].ms); });
+    return 'Pinging on ' + cfg.pingTfs.map(tfLabel).join(', ') + '. This uses about ' + per + ' data calls a day for ' + WL().length + ' pairs. A free key allows 800' + (per > 800 ? ', so pick fewer pairs or longer timeframes.' : '.');
+  }
+  function viewPairs() {
+    return backBar('Pairs') + '<div class="card form"><label for="pl-q">Search any pair</label>' +
+      '<input id="pl-q" type="search" autocomplete="off" autocapitalize="characters" placeholder="EURUSD, GBP, NGN, JPY..." value="' + esc(plq) + '">' +
+      '<div id="pl-res">' + pairResults(plq) + '</div></div>' +
+      '<div class="card"><div class="label">Watching now <span id="pl-n">' + WL().length + '</span></div><div id="pl-have">' + haveList() + '</div>' +
+      '<p class="foot">Each pair uses a few data calls every hour. A free Twelve Data key allows 800 a day, so about 15 pairs is the practical limit. Some exotic pairs are not on the free plan. If one shows as failed, remove it.</p></div>' + nav();
   }
 
   function viewRecord() {
@@ -1142,40 +1420,56 @@ button.row:active{transform:scale(.99)}
       '<button class="ghost" data-act="perm">Turn on notifications</button>' +
       '<button class="ghost" data-act="test">Send a test notification</button>' +
       '<p class="foot" id="f-msg" role="status"></p>' +
-      '<p class="foot">The app only downloads prices when a new candle has closed, so a free key is plenty. Raising the minimum strength gives fewer, more selective signals. Alerts arrive while the app is open or was used recently. Phones pause apps that stay closed, so for alerts that never miss, also run the Telegram alert script.</p></div>' + nav();
+'<p class="foot">Raising the minimum strength gives fewer, more selective signals. Phones pause apps that stay closed, so this app can only ping you while it is open or was used recently. For pings when it is closed, use the card below.</p></div>' +
+      '<div class="card"><div class="label">Ping me on these timeframes</div>' +
+      '<p class="foot tap">Tap to turn each one on or off. You can pick as many as you like. You get a ping the moment a trade is ready on any timeframe you pick.</p>' +
+      '<div class="tfrow wrapr">' + TFS.map(function (t) { return '<button class="tab' + (pingsOn(t[0]) ? ' on' : '') + '" data-ptf="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>' +
+      '<p class="foot" id="ptf-note">' + pingNote() + '</p></div>' +
+      '<div class="card pingcard"><div class="label">Pings when the app is closed</div>' +
+      '<p class="foot tap">A free push app called ntfy delivers them, with no sign-up. Setup takes about 5 minutes, once.</p>' +
+      '<ol class="steps"><li>Install <b>ntfy</b> from the Play Store, open it, tap <b>+</b>, and subscribe to your topic below.</li>' +
+      '<li>Tap Send test ping here. Your phone should ping.</li>' +
+      '<li>On GitHub, add a secret called <b>NTFY_TOPIC</b> with the same topic, plus <b>TWELVEDATA_KEY</b>, and upload the alerts files from the alerts zip.</li>' +
+      '<li>On GitHub, Settings, Secrets and variables, Actions, Variables, add <b>INTERVAL</b> with the timeframes you copy below, and optionally <b>PAIRS</b> with the pair list, so the alerts watch what you chose.</li></ol>' +
+      '<div class="topic mono">' + esc(cfg.topic) + '</div>' +
+      '<button class="ghost" data-act="copy-topic">Copy topic</button><button class="ghost" data-act="ntfy-test">Send test ping</button>' +
+      '<button class="ghost" data-act="copy-pairs">Copy my pair list (for GitHub)</button>' +
+      '<button class="ghost" data-act="copy-ptf">Copy my timeframes (for GitHub)</button>' +
+      '<p class="foot" id="f-msg2" role="status"></p></div><div class="ver">Meridian Signal v' + VERSION + ' &middot; 8 timeframes &middot; pair search</div>' + nav();
   }
 
   function render() {
     var y = window.scrollY;
     if (screen === 'chart') { renderChart(); return; }
     $app.classList.remove('chartmode'); chartInst = null; chartKey = null;
-    $app.innerHTML = screen === 'list' ? viewList() : screen === 'detail' ? viewDetail() : screen === 'record' ? viewRecord() : viewSettings();
+    $app.innerHTML = screen === 'list' ? viewList() : screen === 'detail' ? viewDetail() : screen === 'record' ? viewRecord() : screen === 'pairs' ? viewPairs() : viewSettings();
     if (screen === 'detail') {
-      var p = A.PAIRS[selected], ev = evals[p.sym], c = document.getElementById('chart');
+      var p = WL()[selected], ev = evals[p.sym], c = document.getElementById('chart');
       if (c && ev && ev.res) drawChart(c, p, ev);
     }
     window.scrollTo(0, y);
+    var row = document.getElementById('tfrow'), on = row && row.querySelector('.tab.on');
+    if (on) row.scrollLeft = on.offsetLeft - row.clientWidth / 2 + on.clientWidth / 2;
   }
 
   /* ---------- chart screen ---------- */
   function serFor(pair, cs) {
-    var k = pair.sym + '|' + cfg.tf + '|' + cs.length + '|' + cs[cs.length - 1].t;
+    var k = pair.sym + '|' + cfg.tf + '|' + cs.length + '|' + cs[cs.length - 1].t + '|' + cs[cs.length - 1].c;
     if (!serCache[k]) { serCache = {}; serCache[k] = A.series(cs); }
     return serCache[k];
   }
   function btFor(pair, cs) {
     var k = pair.sym + '|' + cfg.tf + '|' + cs.length + '|' + cs[cs.length - 1].t + '|' + cfg.minConf;
-    if (!btCache[k]) { btCache = {}; btCache[k] = A.backtest(cs, pair, { minConf: +cfg.minConf || 65 }); }
+    if (!btCache[k]) { btCache = {}; btCache[k] = A.backtest(cs, pair, { minConf: +cfg.minConf || 65, minStop: A.TF[cfg.tf].minStop }); }
     return btCache[k];
   }
   function chartTop() {
-    var ev = evals[A.PAIRS[selected].sym];
-    var h = '<div class="hs">' + A.PAIRS.map(function (p, i) {
+    var ev = evals[WL()[selected].sym];
+    var h = '<div class="hs">' + WL().map(function (p, i) {
       return '<button class="cc' + (i === selected ? ' on' : '') + '" data-csym="' + i + '">' + p.sym + '</button>';
-    }).join('') + '</div><div class="hs"><span class="tfs">' + TFS.map(function (t) {
+    }).join('') + '<button class="cc" data-nav="pairs" aria-label="Add pair">+ Pair</button></div><div class="hs"><span class="tfs">' + TFS.map(function (t) {
       return '<button class="cc' + (cfg.tf === t[0] ? ' on' : '') + '" data-tf="' + t[0] + '">' + t[1] + '</button>';
-    }).join('') + '</span>' +
-      (ev && ev.res ? '<span class="grow"></span>' + pill(ev.res.signal, ev.ready.ok) + '<span class="small muted cst">' + (ev.res.signal === 'WAIT' ? 'No clear direction' : ev.ready.ok ? 'Ready to trade' : esc(ev.ready.waiting)) + '</span>' : '') + '</div>';
+    }).join('') + '</span></div>';
     h += '<div class="hs">' + [['ema', 'EMA'], ['bb', 'Bands'], ['rsi', 'RSI'], ['macd', 'MACD'], ['sig', 'Signals'], ['lvl', 'Levels']].map(function (x) {
       return '<button class="tg' + (chartFlags[x[0]] ? ' on' : '') + '" data-ind="' + x[0] + '" aria-pressed="' + !!chartFlags[x[0]] + '">' + x[1] + '</button>';
     }).join('') + '<i class="sepv"></i>' + [['h', 'Line'], ['t', 'Trend'], ['alert', 'Alert']].map(function (x) {
@@ -1193,12 +1487,12 @@ button.row:active{transform:scale(.99)}
   }
   function renderChart() {
     $app.classList.add('chartmode');
-    var pair = A.PAIRS[selected], hit = store[pair.sym + '|' + cfg.tf], ev = evals[pair.sym];
+    var pair = WL()[selected], hit = store[pair.sym + '|' + cfg.tf], ev = evals[pair.sym];
     if (!document.getElementById('cv')) {
-      $app.innerHTML = '<div class="ch"><div id="c-top"></div><div class="cvbox"><canvas id="cv"></canvas></div><div id="c-stat"></div></div>' + nav();
+      $app.innerHTML = '<div class="ch"><div id="c-top"></div><div class="cvbox"><canvas id="cv"></canvas></div><div id="c-tk"></div><div id="c-stat"></div></div>' + nav();
       chartInst = new MChart(document.getElementById('cv'), {
         colors: CH, timeLabel: timeLabel,
-        onDraws: function (list) { draws[A.PAIRS[selected].sym] = list; save('ms_draw', draws); },
+        onDraws: function (list) { draws[WL()[selected].sym] = list; save('ms_draw', draws); },
         onTool: function () { document.getElementById('c-top').innerHTML = chartTop(); }
       });
       chartKey = null;
@@ -1207,38 +1501,116 @@ button.row:active{transform:scale(.99)}
     chartInst.draws = draws[pair.sym] || (draws[pair.sym] = []);
     document.getElementById('c-top').innerHTML = chartTop();
     document.getElementById('c-stat').innerHTML = chartStat(pair, hit);
+    document.getElementById('c-tk').innerHTML = ticket(pair, ev);
+    chartData(pair);
+  }
+  function liveText() {
+    if (demoMode()) return 'Simulated ticks (demo)';
+    if (!A.marketOpen()) return 'Market closed';
+    return liveAt ? 'Live ' + new Date(liveAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Getting live price';
+  }
+  function ticket(pair, ev) {
+    var f = function (v) { return fmt(v, pair.dec); }, pl = ev && ev.plan, lv = formFor(pair, cfg.tf), px = lv ? lv.c : (ev && ev.res ? ev.res.last : null);
+    var h = '<div class="tkh"><span class="dotl"></span><b id="c-px" class="mono">' + (px != null ? f(px) : '-') + '</b><span class="muted small" id="c-live">' + esc(liveText()) + '</span>' +
+      (ev && ev.res ? '<span class="grow"></span>' + pill(ev.res.signal, ev.ready.ok) : '') + '</div>' +
+      (ev && ev.res && ev.res.signal !== 'WAIT' ? '<div class="small ' + (ev.ready.ok ? 'okt' : 'muted') + ' tkn">' + (ev.ready.ok ? 'Ready to trade: all checks pass.' : esc(ev.ready.waiting) + '.') + '</div>' : '');
+    if (!pl) return h + '<div class="muted small tkn">No trade levels: no clear direction right now.</div>';
+    var chips = [['Entry', f(pl.entry), '#EEF2FF'], ['Stop loss', f(pl.sl), DOWN], ['Take profit 1', f(pl.tp1), UP], ['Take profit 2', f(pl.tp2), CYAN], ['Lots', pl.ok ? pl.lots.toFixed(2) : '', AMBER]];
+    return h + '<div class="chips">' + chips.map(function (c) {
+      return '<button class="tkc" data-copy="' + esc(c[1]) + '" data-cl="' + esc(c[0].toLowerCase()) + '"><span class="cl" style="color:' + c[2] + '">' + c[0] + '</span><span class="mono">' + (c[1] || '-') + '</span></button>';
+    }).join('') + '<button class="tkc all" data-copyall="1"><span class="cl">Copy all</span><span class="mono">' + (plan_dir(pl)) + '</span></button></div>';
+  }
+  function plan_dir(pl) { return pl.dir > 0 ? 'BUY' : 'SELL'; }
+  function pushChart() {
+    if (screen !== 'chart' || !chartInst) return;
+    var pair = WL()[selected], lv = formFor(pair, cfg.tf);
+    chartData(pair);
+    var px = document.getElementById('c-px'), lt = document.getElementById('c-live'), f = function (v) { return fmt(v, pair.dec); };
+    if (px && lv) px.textContent = f(lv.c);
+    if (lt) lt.textContent = liveText();
+  }
+  function chartData(pair) {
+    var hit = store[pair.sym + '|' + cfg.tf], ev = evals[pair.sym];
     if (hit && hit.cs && hit.cs.length >= 2) {
       var key = pair.sym + '|' + cfg.tf, keep = chartKey === key;
       chartKey = key;
+      var all = withLive(pair, cfg.tf, hit.cs);
       var f = ev && ev.plan, lv = [];
       if (f) lv = [{ label: 'TP2', price: f.tp2, color: CYAN, dash: [6, 4] }, { label: 'TP1', price: f.tp1, color: UP, dash: [6, 4] },
         { label: 'Entry', price: f.entry, color: '#EEF2FF' }, { label: 'Stop', price: f.sl, color: DOWN, dash: [6, 4] }];
       chartInst.levels = lv;
       chartInst.markers = hit.cs.length >= 61 ? btFor(pair, hit.cs).trades.map(function (t) { return { i: t.i, dir: t.dir, out: t.out }; }) : [];
-      chartInst.setData(hit.cs, serFor(pair, hit.cs), pair.dec, cfg.tf, keep);
+      chartInst.setData(all, serFor(pair, all), pair.dec, cfg.tf, keep);
     } else { chartInst.cs = null; chartInst.draw(); }
   }
+
+  var pairsChanged = false;
+  function refreshPairsUi() {
+    var r = document.getElementById('pl-res'), h = document.getElementById('pl-have'), n = document.getElementById('pl-n');
+    if (r) r.innerHTML = pairResults(plq); if (h) h.innerHTML = haveList(); if (n) n.textContent = WL().length;
+  }
+  function leavePairs() {
+    if (!pairsChanged) return;
+    pairsChanged = false; selected = 0; chartKey = null;
+    WL().forEach(evaluate); setTimeout(function () { refresh(false); }, 0);
+  }
+  $app.addEventListener('input', function (e) {
+    if (e.target && e.target.id === 'pl-q') { plq = e.target.value; var r = document.getElementById('pl-res'); if (r) r.innerHTML = pairResults(plq); }
+  });
 
   /* ---------- events ---------- */
   $app.addEventListener('click', function (e) {
     var t = e.target.closest('button');
     if (!t) return;
+    if (t.dataset.ptf) {
+      var ix = cfg.pingTfs.indexOf(t.dataset.ptf);
+      if (ix >= 0) cfg.pingTfs.splice(ix, 1); else cfg.pingTfs.push(t.dataset.ptf);
+      cfg.pingTfs = TFS.map(function (x) { return x[0]; }).filter(function (x) { return cfg.pingTfs.indexOf(x) >= 0; });
+      save('ms_cfg', cfg); schedule(); t.classList.toggle('on', ix < 0);
+      var nt = document.getElementById('ptf-note'); if (nt) nt.textContent = pingNote();
+      return setTimeout(function () { refresh(false); }, 0);
+    }
+    if (t.dataset.copy != null) { if (!t.dataset.copy) return toast('Set balance and risk in Settings first'); return copyText(t.dataset.copy, t.dataset.cl || ''); }
+    if (t.dataset.copyall) {
+      var cp = WL()[selected], cev = evals[cp.sym];
+      if (cev && cev.plan) return copyText(ticketText(cp, cev.plan, cev.res.signal), 'whole trade');
+      return;
+    }
+    if (t.dataset.padd) {
+      if (watch.length >= 20) return toast('Maximum 20 pairs');
+      if (watch.indexOf(t.dataset.padd) < 0) watch.push(t.dataset.padd);
+      save('ms_watch', watch); pairsChanged = true; refreshPairsUi(); return toast('Added ' + t.dataset.padd);
+    }
+    if (t.dataset.prem) {
+      if (watch.length <= 1) return toast('Keep at least one pair');
+      watch = watch.filter(function (x) { return x !== t.dataset.prem; });
+      save('ms_watch', watch); pairsChanged = true; refreshPairsUi(); return toast('Removed ' + t.dataset.prem);
+    }
     if (t.dataset.csym != null) { selected = +t.dataset.csym; chartKey = null; return render(); }
     if (t.dataset.ind) { chartFlags[t.dataset.ind] = !chartFlags[t.dataset.ind]; save('ms_chart', chartFlags); return render(); }
     if (t.dataset.tool && chartInst) {
       chartInst.tool = chartInst.tool === t.dataset.tool ? null : t.dataset.tool; chartInst.pending = null;
       document.getElementById('c-top').innerHTML = chartTop(); return chartInst.draw();
     }
-    if (t.dataset.nav) { screen = t.dataset.nav; clearArmed = false; window.scrollTo(0, 0); return render(); }
+    if (t.dataset.nav) { if (screen === 'pairs' && t.dataset.nav !== 'pairs') leavePairs(); screen = t.dataset.nav; clearArmed = false; window.scrollTo(0, 0); return render(); }
     if (t.dataset.pair != null) { selected = +t.dataset.pair; screen = 'detail'; window.scrollTo(0, 0); return render(); }
-    if (t.dataset.tf) { cfg.tf = t.dataset.tf; save('ms_cfg', cfg); A.PAIRS.forEach(evaluate); render(); return refresh(false); }
+    if (t.dataset.tf) { cfg.tf = t.dataset.tf; save('ms_cfg', cfg); schedule(); WL().forEach(evaluate); render(); return refresh(false); }
     var act = t.dataset.act;
-    if (act === 'back') { screen = 'list'; return render(); }
+    if (act === 'back') { if (screen === 'pairs') leavePairs(); screen = 'list'; return render(); }
     if (act === 'open-chart') { screen = 'chart'; chartKey = null; window.scrollTo(0, 0); return render(); }
     if (act === 'ch-undo' && chartInst) { chartInst.draws.pop(); save('ms_draw', draws); return chartInst.draw(); }
     if (act === 'ch-clear' && chartInst) { chartInst.draws.length = 0; save('ms_draw', draws); return chartInst.draw(); }
     if (act === 'ch-fit' && chartInst) { chartInst.reset(); return chartInst.draw(); }
     if (act === 'run') return refresh(true);
+    if (act === 'copy-ptf') return cfg.pingTfs.length ? copyText(cfg.pingTfs.join(','), 'timeframes') : toast('Pick at least one timeframe first');
+    if (act === 'copy-pairs') return copyText(watch.join(','), 'pair list');
+    if (act === 'copy-topic') return copyText(cfg.topic, 'topic name');
+    if (act === 'ntfy-test') {
+      var nm = document.getElementById('f-msg2'); nm.textContent = 'Sending...';
+      return fetch('https://ntfy.sh/' + encodeURIComponent(cfg.topic), { method: 'POST', body: 'Test ping: this is how a ready trade will arrive.', headers: { Title: 'Meridian Signal', Priority: 'high' } })
+        .then(function (r) { nm.textContent = r.ok ? 'Sent. If the ntfy app is subscribed to this topic, it pings now.' : 'Could not send (' + r.status + ').'; })
+        .catch(function () { nm.textContent = 'Could not reach ntfy. Check your internet.'; });
+    }
     if (act === 'perm-list') return askPermission().then(render);
     if (act === 'clear') {
       if (!clearArmed) { clearArmed = true; return render(); }
@@ -1254,7 +1626,7 @@ button.row:active{transform:scale(.99)}
       cfg.alerts = document.getElementById('f-alerts').checked;
       save('ms_cfg', cfg); schedule();
       if (cfg.key !== oldKey) { store = {}; evals = {}; readyState = {}; save('ms_ready', readyState); }
-      else A.PAIRS.forEach(evaluate);
+      else WL().forEach(evaluate);
       screen = 'list'; render(); return refresh(false);
     }
     var msg = document.getElementById('f-msg');
@@ -1270,6 +1642,13 @@ button.row:active{transform:scale(.99)}
   document.addEventListener('visibilitychange', function () { if (!document.hidden) refresh(false); });
 
   schedule();
+  setInterval(tick, 1500);
+  var lnx = LN();
+  if (lnx && lnx.addListener) lnx.addListener('localNotificationActionPerformed', function (ev) {
+    var x = ev && ev.notification && ev.notification.extra;
+    for (var i = 0; x && x.sym && i < WL().length; i++) if (WL()[i].sym === x.sym) { selected = i; screen = 'detail'; render(); }
+  });
+  channel();
   checkPermission().then(render);
   render();
   refresh(false);

@@ -308,19 +308,18 @@ def push(token, chat_id, topic, text):
 
 # ---------- main ----------
 
-def main():
+def run(interval):
     args = set(sys.argv[1:])
     token = os.environ.get("TELEGRAM_TOKEN", "")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID", "")
     topic = os.environ.get("NTFY_TOPIC", "").strip()
     key = os.environ.get("TWELVEDATA_KEY", "")
-    interval = os.environ.get("INTERVAL", "1h")
     min_conf = float(os.environ.get("MIN_CONF", "65"))
     balance = float(os.environ.get("ACCOUNT_BALANCE", "5000"))
     risk_pct = float(os.environ.get("RISK_PCT", "1"))
     demo = "--demo" in args
     if interval not in HTF:
-        sys.exit("INTERVAL must be 1min, 5min, 15min, 30min, 1h, 4h, 1day or 1week")
+        sys.exit("INTERVAL must be a list made of 1min, 5min, 15min, 30min, 1h, 4h, 1day, 1week")
 
     if "--test" in args:
         push(token, chat_id, topic, "Meridian Signal is connected\nYou will get a message when a trade is ready.")
@@ -393,6 +392,25 @@ def main():
         with open(state_path, "w") as fh:
             json.dump(state, fh)
     print(f"Done. {sent} alert(s).")
+
+
+def main():
+    """INTERVAL can hold several timeframes, for example 5min,15min,1h. Each one is checked and alerted on its own."""
+    raw = os.environ.get("INTERVAL", "15min")
+    ivs = []
+    for part in raw.replace(";", ",").split(","):
+        part = part.strip()
+        if part and part not in ivs:
+            ivs.append(part)
+    ivs = ivs or ["15min"]
+    for iv in ivs:
+        if iv not in HTF:
+            sys.exit(f"Unknown timeframe '{iv}'. Use 1min, 5min, 15min, 30min, 1h, 4h, 1day or 1week, separated by commas.")
+    if "--test" in sys.argv[1:]:
+        ivs = ivs[:1]
+    for iv in ivs:
+        print(f"--- {TF_LABEL[iv]} ---")
+        run(iv)
 
 
 if __name__ == "__main__":
