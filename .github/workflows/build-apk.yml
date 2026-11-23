@@ -31,6 +31,12 @@ jobs:
       - name: Create Android project
         run: npx cap add android
 
+      - name: Let the app see MetaTrader
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's|<application|<queries><package android:name="net.metaquotes.metatrader5" /><package android:name="net.metaquotes.metatrader4" /></queries>\n    <application|' $M
+          grep -c "net.metaquotes" $M
+
       - name: Use the Meridian icon
         run: |
           R=android/app/src/main/res
@@ -51,5 +57,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: meridian-signal-${{ github.run_number }}
+          name: meridian-signal-v3-5-run-${{ github.run_number }}
           path: android/app/build/outputs/apk/debug/app-debug.apk
